@@ -1,0 +1,632 @@
+body {
+	font-family: Arial, sans-serif;
+	height: 100vh;
+	width: 100vw;
+	margin: 0;
+	position: absolute;
+	overflow: hidden;
+}
+
+.content {
+	display: flex;
+	height: 100%;
+	width: 100%;
+	top: 0; bottom: 0;
+	left: 0; right: 0;
+}
+
+.nav-container {
+	width: 18%;
+	min-width: 16em;
+	font-size: 16px;
+	background-color: #131518;
+	color: #fffc;
+	overflow-y: auto;
+}
+
+.nav-header {
+	display: flex;
+	margin-bottom: 1.5em;
+}
+
+.nav-icon {
+	height: 3.53125em;
+	width: 3em;
+	font-size: 1.2em;
+	margin: 2em 2em 0 1.8em;
+}
+.menu {
+	font-size: 0.7em;
+	fill: white;
+}
+
+.nav-item {
+	padding: 0.9em 1em;
+	display: flex;
+	align-items: center;
+	font-size: 0.9em;
+	margin: 0 0.5em;
+}
+.nav-item:hover {
+	background-color: #fff3;
+	cursor: pointer;
+}
+.nav-item:active {
+	background-color: #fff7;
+}
+.nav-item.current {
+	pointer-events: none;
+	border: solid 1px #18acc3;
+}
+.nav-item-current-icon {
+	height: 1em;
+	width: 1em;
+	fill: #18acc3;
+}
+.nav-container .separator {
+	height: 1px;
+	width: 4em;
+	margin-left: 2em;
+	background-color: #0002;
+}
+
+.nav-item-text {
+	font-size: 1.2em;
+	flex: 1;
+	margin-left: 1em;
+}
+.nav-item.current .nav-item-text {
+	color: #18acc3;
+}
+
+.main {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	background-color: antiquewhite;
+}
+.header {
+	display: flex;
+	height: 2em;
+	background-color: #e96;
+	align-items: center;
+	padding: 1.5em;
+}
+.stretch {
+	flex: 1;
+}
+.header-profile {
+	text-align: right;
+}
+.header-profile-title {
+	font-size: 1.3em;
+	font-weight: 600;
+}
+.header-profile-subtitle {
+	font-size: 1.1em;
+}
+
+.body {
+	overflow: auto;
+	flex: 1;
+	background: #f7f7ff;
+	padding: 2em 1em;
+}
+.list {
+	padding: 1em;
+	display: none;
+	margin: 0 0 1em 0;
+}
+.list-title {
+	font-size: 1.1em;
+	color: #000b;
+	margin: 0 0 1em 0.5em;
+	text-decoration: solid underline 1px;
+}
+.list-header {
+	color: #0009;
+	font-size: 0.9em;
+	margin: 0 0 1em 0;
+}
+.list-item {
+	display: flex;
+	flex-direction: row;
+	padding: 0.5em 0 0.5em 0;
+	border-bottom: solid 1px lightgray;
+	border-top: solid 0px;
+	align-items: center;
+}
+.list-item-sub-label {
+	color: #0009;
+	font-size: 0.95em;
+}
+.list-item-column {
+	margin: 0 0.5em;
+	flex: 1;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	/* align-items: center; */
+}
+.add-new {
+	align-items: flex-start;
+	margin: 0.5em 0.5em;
+}
+
+.link {
+	color: #00f;
+	cursor: pointer;
+}
+.link:hover {
+	text-decoration: solid underline;
+}
+.link:active {
+	color: #ccf;
+}
+
+.list-item-column button {
+	display: block;
+}
+.center {
+	text-align: center;
+}
+
+#new-employee-form, #leave-form {
+	max-width: 35em;
+	padding: 2em;
+	display: none;
+	justify-content: center;
+	position: relative;
+}
+form {
+	border: solid 1px #0002;
+	padding: 2em;
+	background-color: #fff;
+}
+.form-back, .profile-back {
+	font-size: 15px;
+	padding: 0.5em;
+	margin-bottom: 1em;
+}
+form label {
+	display: block;
+	margin: 0.5em 0 0.2em 0.5em;
+	color: #311;
+	font-size: 15px;
+}
+form input, form select, form button, form textarea {
+	display: block;
+	font-size: 16px;
+	height: 30px;
+	min-width: -webkit-fill-available;
+	margin: 0 0 1em 0.5em;
+}
+form textarea {
+	height: 100px;
+}
+
+form .section {
+	margin: 0 0 1em 0.5em;
+	min-width: -webkit-fill-available;
+}
+form .section > input {
+	height: 2em;
+	margin: 0.2em 0;
+	min-width: -webkit-fill-available;
+}
+form input[type="radio"].illegal {
+	accent-color: red;
+}
+form input[type="radio"].illegal+label {
+	color: red;
+}
+form input[type="radio"]:disabled+label {
+	color: gray;
+}
+.calendar-input-outer {
+	border: none #00f 1px;
+	border-radius: 4px;
+	position: relative;
+	font-size: 1.2em;
+	font-family: monospace;
+}
+.calendar-input-display {
+	display: flex;
+	background: white;
+	padding: 0.3em;
+	border: solid #777 1px;
+	border-radius: 3px;
+	cursor: default;
+}
+.calendar-input-outer:focus {
+	border: solid #00f 1px;
+}
+.calendar-input-outer:focus .calendar-picker {
+	display: block;
+}
+.calendar-input-text {
+	flex: 1;
+}
+.calendar-picker {
+	display: none;
+	position: absolute;
+	background-color: #fff;
+	top: 100%;
+	border: solid 1px #777;
+	z-index: 2;
+}
+.calendar-header {
+	display: flex;
+	height: 2.5em;
+	font-weight: bold;
+	align-items: center;
+	cursor: default;
+	padding: 0.2em;
+}
+.calendar-month {
+	flex: 1;
+	text-align: center;
+}
+.calendar-month-change {
+	padding: 0.4em 1em;
+}
+.calendar-week {
+	display: flex;
+}
+
+.calendar-picker .active:hover {
+	background-color: rgb(182, 227, 255);
+	color: #000;
+}
+.calendar-day, .calendar-weekday {
+	flex: 1;
+	height: auto;
+	aspect-ratio: 1;
+	display: flex;
+	flex-direction: column;
+	position: relative;
+}
+.calendar-day .label {
+	flex: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: relative;
+}
+.calendar-day.holiday:hover .calendar-day-tooltip {
+	visibility: visible;
+}
+.calendar-day-tooltip {
+	position: absolute;
+	font-size: 0.7em;
+	z-index: 5;
+	background-color: black;
+	color: white;
+	padding: 0.5em;
+	border-radius: 5px;
+	visibility: hidden;
+	top: 75%;
+	left: 60%;
+	white-space: nowrap;
+}
+.calendar-day-bg {
+	border-color: blue;
+	border-width: 1px;
+	color: black;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 0.6em;
+	position: absolute;
+	top: 0; left: 0; bottom: 0; right: 0;
+}
+.calendar-day-bg > div {
+	height: 100%;
+	visibility: hidden;
+	display: block;
+	flex: 1;
+	background-color: #c5c5c5;
+}
+.calendar-weekday {
+	font-weight: bold;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.calendar-day.today {
+	color: rgb(9,50,254);
+}
+.calendar-day.disabled {
+	pointer-events: none;
+	color: #888;
+}
+.calendar-day.warning {
+	background-color: #ffe5e5;
+}
+.calendar-day.warning .calendar-day-bg {
+	border-color: red;
+}
+.calendar-day.holiday-morning .morning {
+	visibility: visible;
+}
+.calendar-day.holiday-evening .evening {
+	visibility: visible;
+}
+.calendar-day.selected .calendar-day-bg {
+	border-style: solid;
+}
+.calendar-day .tip {
+	display: none;
+	position: absolute;
+	background: #666;
+	font-size: 0.7em;
+	padding: 0.2em 1em;
+	bottom: -5px;
+	border-radius: 2px;
+	left: 1em;
+	color: #fff;
+	z-index: 1000;
+}
+.calendar-day.show-tip .tip.enabled {
+	display: block;
+}
+
+
+#profile {
+	max-width: 35em;
+	display: none;
+	padding: 2em;
+	margin: 2em;
+	border: solid 1px #0003;
+	border-radius: 8px;
+	background-color: #fff;
+}
+#profile .title {
+	font-size: 1.4em;
+	font-weight: bold;
+	margin: 0 0 1em 0;
+}
+#profile .field {
+	display: flex;
+	margin: 0 0 1em 0;
+	min-height: 1em;
+}
+#profile .field-name {
+	flex: 2;
+	color: #000a;
+}
+#profile .field-value {
+	flex: 3;
+	text-align: right;
+}
+#profile button {
+	width: -webkit-fill-available;
+	padding: 0.5em;
+}
+
+
+#requestattendance {
+	padding: 1em;
+	font-size: 1em;
+	margin: 2em;
+	border: solid 1px #0003;
+	border-radius: 8px;
+	background: #fff;
+	max-width: 35em;
+	display: none;
+}
+#requestattendance .title {
+	font-size: 1.2em;
+	font-weight: bold;
+	margin: 0 0 1em 0;
+}
+#requestattendance label {
+	display: inline-block;
+}
+#requestattendance input {
+	display: inline-block;
+}
+#requestattendance button {
+	font-size: 0.9em;
+	margin: 1em 0;
+	padding: 0.2em 2em;
+	display: block;
+}
+
+
+.modal-outer {
+	position: absolute;
+	display: flex;
+	display: none;
+	top: 0; left: 0;
+	height: 100vh;
+	width: 100vw;
+	background-color: #0005;
+	align-items: center;
+	justify-content: center;
+	font-size: 1.1em;
+}
+.modal-inner {
+	box-shadow: 0 0.2em 0.6em #0006;
+}
+.modal-body {
+	padding: 1em;
+	background-color: white;
+}
+.modal-actions {
+	display: flex;
+}
+.modal-actions button {
+	flex: 1;
+	height: 2em;
+	border: solid 1px white;
+	font-size: 1em;
+	background-color: #ddd;
+}
+.modal-actions button:hover {
+	background-color: #e4e4e4;
+}
+.modal-actions button:active {
+	background-color: #eee;
+}
+
+.modal-body input, .modal-body select {
+	width: -webkit-fill-available;
+	font-size: 1em;
+	padding: 0.3em;
+	margin: 0.2em 0 1em 0;
+}
+
+#calendar {
+	display: none;
+	font-size: 2vw;
+	margin: 2em;
+	padding: 2em;
+	background-color: #fff;
+}
+#calendarChanger {
+	display: none;
+	border: solid 1px #0004;
+	border-radius: 6px;
+	background-color: #fff;
+	padding: 1em;
+	/*box-shadow: 0 4px 5px #0003;*/
+}
+.calendar-changer-title {
+	/*padding: 0.5em 1em 0.1em 1em;*/
+	margin: 0.5em 0.5em;
+	font-size: 1.1em;
+	font-weight: bold;
+}
+.calendar-changer-body {
+	display: flex;
+	padding: 0.5em;
+	align-items: center;
+}
+.calendar-changer-body > label {
+	flex: 1;
+	margin: 0 0 0 1em;
+}
+
+label[data-disabled=true] {
+	color: #0004;
+}
+
+button, input, select, option {
+	font-size: 0.9em;
+}
+input[type='checkbox'] {
+	height: 0.7em;
+	width: 0.7em;
+}
+
+table, td, th {
+	border-collapse: collapse;
+	border: solid 1px;
+}
+td, th {
+	min-width: 5em;
+	padding: 0.3em;
+}
+#boxTable .title {
+	margin-bottom: 0.5em;
+}
+#boxtable {
+	padding: 2em;
+	margin: 2em;
+	background-color: #fff;
+	border: solid 1px #0003;
+	border-radius: 8px;
+	display: none;
+}
+
+.empty {
+	margin-top: 20vh;
+	color: #0006;
+	width: -webkit-fill-available;
+	text-align: center;
+}
+
+.info-outer {
+	padding: 1em;
+	display: none;
+}
+.info-title {
+	font-size: 1.3em;
+	font-weight: 600;
+}
+.info {
+	background-color: #fff;
+	padding: 1em;
+	border: solid 1px #0005;
+	border-radius: 8px;
+	border-radius: 0.5em;
+	color: #000a;
+	margin-top: 1em;
+}
+.info.short .fullversion {
+	display: none;
+}
+.info.full .shortversion {
+	display: none;
+}
+.info .highlight {
+	font-weight: bold;
+	color: #000;
+}
+.info .enlarge {
+	font-size: 1.2em;
+}
+
+
+#attendanceMarker {
+	padding: 1em 1em 0.5em 1em;
+	margin: 0 2em 1em 2em;
+	background: #fff2;
+	border-radius: 5px;
+}
+#attendanceMarker .actions {
+	display: none;
+	margin: 0.5em 0;
+}
+#attendanceMarker.open .actions, #attendanceMarker.close .actions {
+	display: flex;
+}
+#attendanceMarker .actions button {
+	flex: 1;
+	padding: 1em;
+	font-size: 1.05em;
+	display: none;
+	background: none;
+	border: solid 2px #18acc3;
+	border-radius: 5px;
+	color: #fff;
+}
+#attendanceMarker .actions button:hover {
+	background: #fff2;
+}
+#attendanceMarker .actions button:active {
+	background: #18acc3;
+}
+#attendanceMarker.open .actions button[data-action='open'] {
+	display: block;
+}
+#attendanceMarker.close .actions button[data-action='close'] {
+	display: block;
+}
+#attendanceMarker .about {
+	/* text-align: center; */
+	color: #fff6;
+	font-size: 0.9em;
+}
+#attendanceMarker .label {
+	color: white;
+	margin-bottom: 0.5em;
+}
+#attendanceMarker .label.warning {
+	color: #e77;
+}
+
+#notifierForm {
+	display: none;
+}

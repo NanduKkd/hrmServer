@@ -1,0 +1,392 @@
+<html>
+	<head>
+		<script src="/authRoute.js"></script>
+		<script type="application/javascript" src="/content/boxtable.js"></script>
+		<script type="application/javascript" src="/utils/myfetch.js"></script>
+		<script type="application/javascript" src="/content/table.js"></script>
+		<script type="application/javascript" src="/content/index.js"></script>
+		<script type="application/javascript" src="/content/calendar.js"></script>
+		<script type="application/javascript" src="/content/report.js"></script>
+		<script type="application/javascript" src="/content/profile.js"></script>
+		<script type="application/javascript" src="/content/attendance.js"></script>
+		<script type="application/javascript" src="/utils/leavedate.js"></script>
+		<script type="application/javascript" src="/utils/pml.js"></script>
+		<link type="text/css" rel="stylesheet" href="/style1.css">
+	</head>
+	<body>
+		<div class="content">
+			<div class="nav-container">
+				<div class="nav-header">
+					<img class="logo nav-icon" src="/assets/projem.png">
+					<div class="stretch"></div>
+				</div>
+				<div id="attendanceMarker">
+					<div class="label"></div>
+					<div class="actions">
+						<button data-action="open" onclick="attendanceResponse(this)">Mark Entry</button>
+						<button data-action="close" onclick="attendanceResponse(this)">Mark Exit</button>
+					</div>
+					<div class="about">Attendance Marker</div>
+				</div>
+				<div id="nav-items">
+<!--
+					<div class="nav-item" data-usertype="common" data-page="/dashboard.html">
+						<div class="nav-item-text">Dashboard</div>
+					</div>
+					<div class="separator" data-usertype="common"></div>
+				-->
+				</div>
+			</div>
+				<div class="body">
+					<div class="info-outer" id="infoOuter">
+						<div class="info-title">Upcoming Events</div>
+						<div class="empty">No upcoming events to show.</div>
+					</div>
+					<div class="list" id="list">
+						<div class="list-title">Title of Table</div>
+						<div class="list-item list-header">
+							<!-- <div class="list-item-column" style="flex:3">
+								<div class="list-item-label">Name</div>
+							</div> -->
+						</div>
+						<!-- <div class="list-item">
+							<div class="list-item-column" style="flex: 3;">
+								<div class="list-item-label">Daya Bhaskar</div>
+								<div class="list-item-sub-label">Engineer, Site</div>
+							</div>
+							<div class="list-item-column">
+								<div class="list-item-label">10 Jul</div>
+								<div class="list-item-sub-label">Morning</div>
+							</div>
+							<div class="list-item-column">
+								<div class="list-item-label">12 Jul</div>
+								<div class="list-item-sub-label">Noon</div>
+							</div>
+							<div class="list-item-column">
+								<div class="list-item-label">2.5 days</div>
+							</div>
+							<div class="list-item-column">
+								<div class="list-item-label">P/L</div>
+							</div>
+							<div class="list-item-column">
+								<button class="accept">Accept</button>
+								<button class="reject">Reject</button>
+							</div>
+						</div> -->
+						<div class="list-item">
+							<div class="list-item-column add-new link">+ Add New</div>
+						</div>
+					</div>
+					<div id="new-employee-form">
+						<form onsubmit="event.preventDefault(); newEmployee()">
+							<div class="form-back link" onclick="backFromForm()">Cancel</div>
+							<label for="name">Name</label>
+							<input name="name" required>
+							<label for="email">Email</label>
+							<input name="email" required type="email">
+							<label for="department">Department</label>
+							<select name="department" required>
+								<option value="">--Select--</option>
+							</select>
+							<label for="post">Post</label>
+							<select name="post" required>
+								<option value="">--Select--</option>
+							</select>
+							<input name="onsite" style="display: inline-block; height: 15px; min-width: 15px;" type="checkbox">
+							<label style="display: inline-block;" for="onsite">On-site employee</label>
+							<label for="joiningdate">Joining Date</label>
+							<input type="date" name="joiningdate" required>
+							<label for="monthsprobation">Months Probation</label>
+							<input type="number" value="6" name="monthsprobation" required>
+							<input name="admin" style="display: inline-block; height: 15px; min-width: 15px;" type="checkbox">
+							<label style="display: inline-block;" for="admin">Admin privilages</label>
+							<label for="leavereportingperson">Leave Reporting Person</label>
+							<select name="leavereportingperson" required>
+								<option value="">--Select--</option>
+							</select>
+							<label for="attendancereportingperson">Attendance Reporting Person</label>
+							<select name="attendancereportingperson" required>
+								<option value="">--Select--</option>
+							</select>
+							<button>Create Employee</button>
+						</form>
+					</div>
+					<div id="leave-form">
+						<form onsubmit="event.preventDefault(); submitLeave()">
+							<div class="form-back link" onclick="backFromForm()">Cancel</div>
+
+
+							<label for="select-leave-type">Leave Type:</label>
+							<select name="type" reqiured id="select-leave-type">
+								<option value="">--Select an type--</option>
+								<option value="P/L">Privilage Leave</option>
+								<option value="C/L">Casual Leave</option>
+								<option value="S/L">Sick Leave</option>
+							</select>
+							<div class="section">
+							<div class="csection">
+								<label for="input-from">From</label>
+								<div class="calendar-input-outer" tabindex="0" name="from-date" id="input-from">
+									<div class="calendar-input-display">
+										<div class="calendar-input-text">dd/mm/yyyy</div>
+										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 141 146" height="1em" width="1em">
+											<path d="M13.3,126.4V37.4c0-2.4,.9-4.5,2.6-6.3c1.7-1.8,3.8-2.6 6.2-2.6h8.8v-6.7c0-3.1,1.1-5.7,3.2-7.9c2.2-2.2,4.7-3.3,7.8-3.3h4.4c3,0 5.6,1.1,7.8,3.3c2.2,2.2,3.2,4.8,3.2,7.9v6.7h26.4v-6.7c0-3.1,1.1-5.7 3.2-7.9c2.2-2.2,4.7-3.3,7.8-3.3h4.4c3,0,5.6,1.1,7.8,3.3c2.2,2.2,3.2 4.8,3.2,7.9v6.7h8.8c2.4,0,4.4,.9,6.2,2.6c1.7,1.8,2.6,3.8,2.6,6.3v88.9c0 2.4-.9,4.5-2.6,6.3c-1.7,1.8-3.8,2.6-6.2,2.6H22.1c-2.4,0-4.4-.9-6.2-2.6C14.2,130.8 13.3,128.8,13.3,126.4z M22.1,126.4h96.8V55.2H22.1V126.4z M39.7,41.9c0,.6,.2,1.2 .6,1.6c.4,.4,.9,.6,1.6,.6h4.4c.6,0,1.2-.2,1.6-.6c.4-.4 .6-.9,.6-1.6v-20c0-.6-.2-1.2-.6-1.6c-.4-.4-.9-.6-1.6-.6h-4.4c-.6,0-1.2,.2-1.6 .6c-.4,.4-.6,1-.6,1.6V41.9z M92.5,41.9c0,.6,.2,1.2,.6,1.6c.4,.4,.9,.6 1.6,.6h4.4c.6,0,1.2-.2,1.6-.6c.4-.4 .6-.9,.6-1.6v-20c0-.6-.2-1.2-.6-1.6c-.4-.4-.9-.6-1.6-.6h-4.4c-.6 0-1.2,.2-1.6,.6c-.4,.4-.6,1-.6,1.6V41.9z"/>
+										</svg>
+									</div>
+									<div class="calendar-picker">
+									</div>
+								</div>
+								<input id="select-from-fullday" style="display: inline-block; height: 15px; min-width: 15px;" type="radio" name="from-full-day" value="1">
+								<label for="select-from-fullday" style="display: inline-block;" for="fullday">Morning</label>
+								<input id="select-from-halfday" style="display: inline-block; height: 15px; min-width: 15px;" type="radio" name="from-full-day" value="0">
+								<label for="select-from-halfday" style="display: inline-block;" for="halfday">Noon</label>
+								</div>
+							</div>
+							<div class="section">
+							<div class="csection">
+								<label for="to">To</label>
+								<div class="calendar-input-outer" tabindex="0" name="to-date">
+									<div class="calendar-input-display">
+										<div class="calendar-input-text">dd/mm/yyyy</div>
+										<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 141 146" height="1em" width="1em">
+											<path d="M13.3,126.4V37.4c0-2.4,.9-4.5,2.6-6.3c1.7-1.8,3.8-2.6 6.2-2.6h8.8v-6.7c0-3.1,1.1-5.7,3.2-7.9c2.2-2.2,4.7-3.3,7.8-3.3h4.4c3,0 5.6,1.1,7.8,3.3c2.2,2.2,3.2,4.8,3.2,7.9v6.7h26.4v-6.7c0-3.1,1.1-5.7 3.2-7.9c2.2-2.2,4.7-3.3,7.8-3.3h4.4c3,0,5.6,1.1,7.8,3.3c2.2,2.2,3.2 4.8,3.2,7.9v6.7h8.8c2.4,0,4.4,.9,6.2,2.6c1.7,1.8,2.6,3.8,2.6,6.3v88.9c0 2.4-.9,4.5-2.6,6.3c-1.7,1.8-3.8,2.6-6.2,2.6H22.1c-2.4,0-4.4-.9-6.2-2.6C14.2,130.8 13.3,128.8,13.3,126.4z M22.1,126.4h96.8V55.2H22.1V126.4z M39.7,41.9c0,.6,.2,1.2 .6,1.6c.4,.4,.9,.6,1.6,.6h4.4c.6,0,1.2-.2,1.6-.6c.4-.4 .6-.9,.6-1.6v-20c0-.6-.2-1.2-.6-1.6c-.4-.4-.9-.6-1.6-.6h-4.4c-.6,0-1.2,.2-1.6 .6c-.4,.4-.6,1-.6,1.6V41.9z M92.5,41.9c0,.6,.2,1.2,.6,1.6c.4,.4,.9,.6 1.6,.6h4.4c.6,0,1.2-.2,1.6-.6c.4-.4 .6-.9,.6-1.6v-20c0-.6-.2-1.2-.6-1.6c-.4-.4-.9-.6-1.6-.6h-4.4c-.6 0-1.2,.2-1.6,.6c-.4,.4-.6,1-.6,1.6V41.9z"/>
+										</svg>
+									</div>
+									<div class="calendar-picker">
+									</div>
+								</div>
+								<input id="select-to-fullday" style="display: inline-block; height: 15px; min-width: 15px;" type="radio" name="to-full-day" value="0">
+								<label for="select-to-fullday" style="display: inline-block;" for="halfday">Noon</label>
+								<input id="select-to-halfday" style="display: inline-block; height: 15px; min-width: 15px;" type="radio" name="to-full-day" value="1">
+								<label for="select-to-halfday" style="display: inline-block;" for="fullday">Evening</label>
+								</div>
+							</div>
+							<div class="section">
+								<label for="auto-period">Leave Length (days):</label>
+								<input required disabled name="period" id="auto-period">
+								<div style="font-size: 14px; margin: 0.5em 0 0.2em 0.5em; color: red;"></div>
+							</div>
+							<input style="display: inline-block; height: 1em; width: 1em; min-width: 0;" type="checkbox" name="select-assigned" onclick="leaveForm.children[0].sub.disabled = !this.checked">
+							<label style="display: inline-block;" for="select-assigned">Assign work</label>
+							<select name="sub" disabled>
+								<option value="">--Select--</option>
+							</select>
+							<label for="input-reason">Reason</label>
+							<textarea required id="input-reason" name="reason"></textarea>
+							<button>Apply</button>
+							<!-- <div style="margin: 1em 0 0.5em 0;">Leaves Left</div>
+							<table>
+								<tr>
+									<th>Privilage Leave</th>
+									<th>Casual Leave</th>
+									<th>Sick Leave</th>
+								</tr>
+								<tr>
+									<td id="p/l-left"></td>
+									<td id="c/l-left"></td>
+									<td id="s/l-left"></td>
+								</tr>
+							</table> -->
+						</form>
+					</div>
+					<div id="notifierForm">
+						<form onsubmit="event.preventDefault(); submitNotifier()">
+							<label for="notiTitle">Notification Title</label>
+							<input required id="notiTitle" name="subject">
+							<label for="notiBody">Notification Content</label>
+							<textarea required id="notiBody" name="body"></textarea>
+							<button class="success">Notify</button>
+						</form>
+					</div>
+					<div id="profile">
+						<div class="profile-back link" onclick="backFromProfile()">Cancel</div>
+						<div class="title">Your Profile</div>
+						<div class="field">
+							<div class="field-name">Name</div>
+							<div class="field-value">-</div>
+						</div>
+						<div class="field">
+							<div class="field-name">Privilages</div>
+							<div class="field-value">-</div>
+						</div>
+						<div class="field">
+							<div class="field-name">Post</div>
+							<div class="field-value">-</div>
+						</div>
+						<div class="field">
+							<div class="field-name">Department</div>
+							<div class="field-value">-</div>
+						</div>
+						<div class="field">
+							<div class="field-name">Location</div>
+							<div class="field-value">-</div>
+						</div>
+						<div class="field">
+							<div class="field-name">Joining Date</div>
+							<div class="field-value">-</div>
+						</div>
+						<div class="field" onclick="if(this.dataset.person) showProfile('Person Profile', this.dataset.person)">
+							<div class="field-name">Attendance Reporting Person</div>
+							<div class="field-value">-</div>
+						</div>
+						<div class="field" onclick="if(this.dataset.person) showProfile('Person Profile', this.dataset.person)">
+							<div class="field-name">Leave Reporting Person</div>
+							<div class="field-value">-</div>
+						</div>
+						<div class="field">
+							<div class="field-name">Email</div>
+							<div class="field-value">-</div>
+						</div>
+						<div class="leaves">
+							<div class="field">
+							</div>
+							<div class="field">
+								<div class="field-name">P/L left</div>
+								<div class="field-value">-</div>
+							</div>
+							<div class="field">
+								<div class="field-name">C/L left</div>
+								<div class="field-value">-</div>
+							</div>
+							<div class="field">
+								<div class="field-name">S/L left</div>
+								<div class="field-value">-</div>
+							</div>
+							<!-- <div class="field">
+								<div class="field-name">LoP (Last Month)</div>
+								<div class="field-value">-</div>
+							</div>
+							<div class="field" id="attendanceDetails">
+								<div class="field-name"></div>
+								<div class="field-value link" onclick="showPersonReport()">Attendance Details</div>
+							</div> -->
+						</div>
+						<button>Edit profile</button>
+					</div>
+					<div id="requestattendance">
+						<div class="title">Your attendance for today</div>
+						<input type="checkbox" name="first-half">
+						<label for="first-half">First half</label><br>
+						<input type="checkbox" name="second-half">
+						<label for="second-half">Second half</label>
+						<button onclick="requestAttendance()">Request Attendance</button>
+					</div>
+					<div id="calendar">
+						<div class="calendar-header">
+							<div onclick="calendarMonthChange(-1)" class="calendar-month-change active">‹</div>
+							<div class="calendar-month">2023 February</div>
+							<div onclick="calendarMonthChange(1)" class="calendar-month-change active">›</div>
+						</div>
+						<div class="calendar-dates">
+							<div class="calendar-week">
+								<div class="calendar-weekday">S</div>
+								<div class="calendar-weekday">M</div>
+								<div class="calendar-weekday">T</div>
+								<div class="calendar-weekday">W</div>
+								<div class="calendar-weekday">T</div>
+								<div class="calendar-weekday">F</div>
+								<div class="calendar-weekday">S</div>
+							</div>
+							<div class="calendar-week">
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+							</div>
+							<div class="calendar-week">
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+							</div>
+							<div class="calendar-week">
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+							</div>
+							<div class="calendar-week">
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+							</div>
+							<div class="calendar-week">
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+							</div>
+							<div class="calendar-week">
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+								<div class="calendar-day" onclick="calendarDatePick(this)"></div>
+							</div>
+						</div>
+						<div id="calendarChanger">
+							<div class="calendar-changer-title"></div>
+							<div class="calendar-changer-body">
+								<input onclick="checkChanges()" name="isholiday" type="checkbox"><label>Holiday</label><button onclick="holidaySaved()">Save</button>
+							</div>
+							<div style="flex-direction: column; display: flex; padding: 0.5em 0.6em;">
+								<label data-name="reason">Reason</label>
+								<input name="reason" style="padding: 0.5em" onkeyup="checkChanges()">
+							</div>
+							<div class="calendar-changer-body">
+								<input onclick="checkChanges()" name="isfullday" type="checkbox" checked disabled>
+								<label data-name="isfullday" data-disabled>Full day holiday</label>
+							</div>
+							<div class="calendar-changer-body">
+								<input name="mornoreve" type="radio" value="morning" onclick="checkChanges()" disabled>
+								<label data-name="mornoreve" data-disabled>Morning Half</label>
+								<input name="mornoreve" type="radio" value="evening" onclick="checkChanges()" disabled>
+								<label data-name="mornoreve" data-disabled>Evening Half</label>
+							</div>
+						</div>
+					</div>
+					<div id="boxtable">
+						<div class="title">
+						</div>
+						<table>
+							<tr class="table-header"></tr>
+						</table>
+					</div>
+				</div>
+		</div>
+		<div id="modal" class="modal-outer">
+			<div class="modal-inner">
+				<div class="modal-body">
+					<div id="assigneeChanger">
+						<label for="assignee">Select a new assignee:</label>
+						<select name="assignee">
+							<option value="">Select a person</option>
+						</select>
+					</div>
+				</div>
+				<div class="modal-actions">
+					<button class="cancel">Cancel</button>
+					<button class="submit">Save</button>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

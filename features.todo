@@ -1,0 +1,117 @@
+Auth:
+	☐ Login
+	☐ Reset password
+	☐ Forgot password
+	☐ Logout
+
+
+Employees:
+	✔ Create superadmin @done(23-06-07 20:08)
+	✔ List employees @done(23-06-07 20:08)
+	✔ Create employee @done(23-06-07 20:08)
+	☐ Edit employee data
+	☐ Delete employee
+	☐ Change employee reporting person
+
+
+Attendances:
+	☐ Mark self entry
+	☐ Mark self exit
+	☐ Attendance request to attendance reporting person
+	☐ Verify attendance
+	☐ Change attendance to LoP for half day
+	☐ Change LoP attendance to attendance for half day
+
+
+Leaves:
+	✔ Leave form @done(23-06-07 20:08)
+	✔ Legal leave request to leave reporting person @done(23-06-07 20:08)
+	☐ Special leave to superadmin
+	✔ Accept or reject by leave reporting person @done(23-06-07 20:08)
+	☐ If not responded in n days, show to superadmin
+	☐ Accept or reject by superadmin
+	☐ Accepted leaves should be added to pml records
+	☐ Request cancellation days in a leave
+	☐ Form to select specific days to cancel
+	☐ Request complete cancellation of leave
+	☐ Verify cancellation by admin
+
+Special Leaves:
+	☐ Leaves that start before requesting time
+	☐ Leaves that crosses monthly limits
+
+Leave requests for superadmin:
+	☐ Leave requests from employees who's reporting to superadmin
+	☐ Leave requests that was requested 2 or more days before current day
+
+Leave requests for any other person (employee/admin):
+	☐ Requested by people reporting to that person
+	☐ Requested on current day or the day before
+
+Reports:
+	☐ Employee leaves status currently
+	☐ Per session status of selected month for employee
+	☐ Total report of company of selected month
+
+Employee report for a month:
+	☐ Status of every session
+		☐ Leave
+		☐ Leave (LoP)
+		☐ Attended
+		☐ Red Mark
+		☐ Holiday
+		☐ Holiday (Attended/Compensatory)
+		☐ Sunday
+		☐ -
+	☐ Month and year are selectable
+
+Company report for a month:
+	☐ Opening leave
+	☐ Leaves taken (Till last month)
+		☐ CL/ML/LOP
+		☐ Compensatory
+		☐ Total
+	☐ Balance leave available
+		☐ Leave for employee (>1 year)
+		☐ Leave for employee (<1 year)
+		☐ LOP
+		☐ Net Balance
+	☐ Leave taken this month
+		☐ CL/ML/LOP
+		☐ Red mark
+		☐ Compensatory
+	☐ Balance
+
+Notifications:
+	☐ Create a notification by superadmin
+	☐ Show notifications for admins and employees
+
+
+Calendar:
+	✔ Show onsite calendar for superadmin, admin and onsite employees @done(23-06-07 20:09)
+	✔ Show office calendar for superadmin, admin and office employees @done(23-06-07 20:09)
+	☐ Set a day or session as holiday, and enter reason for superadmin
+	☐ Show holiday reason for admin and employees
+
+
+Leave form:
+	✔ Select type @done(23-06-07 20:09)
+	✔ Select from month @done(23-06-07 20:09)
+	✔ Disable unavailable days in from month @done(23-06-07 20:09)
+	✔ Select from date @done(23-06-07 20:09)
+	✔ Select from morning or afternoon @done(23-06-07 20:09)
+	✔ Select to month @done(23-06-07 20:09)
+	✔ Disable unavailabe days in to month @done(23-06-07 20:09)
+	✔ Select to date @done(23-06-07 20:09)
+	✔ Select to afternoon or evening @done(23-06-07 20:09)
+	✔ List available subs if type if type is privilage leave @done(23-06-07 20:09)
+	✔ Select sub if type is privilage @done(23-06-07 20:09)
+	✔ Submit leave request @done(23-06-07 20:09)
+
+
+Substitute for leave:
+	☐ Show requests
+	☐ Accept or reject requests
+	☐ Show cancellations
+	☐ Show changes
+	☐ Accept or reject changes

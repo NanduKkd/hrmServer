@@ -1,0 +1,56 @@
+Total:
+
+	My Leaves List:
+		✔ My own leaves @done(23-06-08 12:22)
+		Full working statuses for my own leaves:
+			✔ Pending @done(23-06-08 11:56)
+			✔ Waiting for substitute @done(23-06-08 12:22)
+			✔ Rejected by substitute @done(23-06-08 12:22)
+			✔ Accepted @done(23-06-08 11:56)
+			✔ Rejected @done(23-06-08 11:56)
+		✔ Change substitute if rejected by substitute @done(23-06-08 12:22)
+
+	Requested leaves list:
+		✔ Requested legal leaves till 2nd day to that person @done(23-06-09 07:36)
+
+	Special leaves list:
+		✔ Requested special leaves, and legal leaves after 2nd day for superadmin @done(23-06-09 07:36)
+
+	Sub Requests list:
+		✔ List of sub requests @done(23-06-08 12:23)
+		✔ Accept or reject @done(23-06-08 12:23)
+
+	Attendance marking:
+		✔ Attendance marking UI for employees @started(23-06-09 07:43) @done(23-06-09 13:50) @lasted(6h7m45s)
+		✔ Attendance marker disabled for leaves @started(23-06-09 07:43) @done(23-06-09 13:50) @lasted(6h7m45s)
+		✔ Attendance marker disabled after 2:30 PM @started(23-06-09 07:43) @done(23-06-09 13:50) @lasted(6h7m45s)
+		✔ Attendance marker disabled before 9:00 AM @started(23-06-09 07:43) @done(23-06-09 13:50) @lasted(6h7m45s)
+		✔ Show alert if not closed after 5:30 PM @started(23-06-09 07:43) @done(23-06-09 13:50) @lasted(6h7m45s)
+		✔ Open attendance and close attendance from navigation menu @started(23-06-09 07:43) @done(23-06-09 13:50) @lasted(6h7m45s)
+		✔ Call API and save to db @done(23-06-09 19:38)
+		
+	Attendance verification:
+		✔ Attendence list comes to attendance reporting person @started(23-06-09 19:38) @done(23-06-10 12:56) @lasted(17h18m21s)
+		✔ Verify attendance for each session of each employee @done(23-06-10 16:39)
+
+	Notifications:
+		✔ Create notification screen for superadmin @done(23-06-10 17:16)
+		✔ Upload notifications from superadmin fontend @done(23-06-10 17:16)
+		✔ Get and save notification from backend @done(23-06-10 17:17)
+		✔ List notifications for employees @done(23-06-10 18:02)
+		✔ List of upcoming leaves @done(23-06-10 17:17)
+		✔ Detailed view of notification for employee @done(23-06-10 18:02)
+
+	Profile leaves left:
+		✔ Leaves left count for each leave types @started(23-06-10 18:12) @done(23-06-12 08:25) @lasted(1d14h13m37s)
+
+
+
+	Deploy:
+		☐ Push to github
+		☐ Install and run mongodb
+		☐ Install nodejs and git
+		☐ Install pm2
+		☐ Pull from github
+		☐ Run node install
+		☐ Run using pm2
