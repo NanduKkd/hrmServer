@@ -2,7 +2,7 @@ const leaveModel = require('../models/leave')
 const pmlModel = require('../models/pml')
 const holidayModel = require('../models/holiday')
 const attendanceModel = require('../models/attendance')
-const LeaveDate = require('../utils/LeaveDate')
+const LeaveDate = require('./leavedate')
 const mongoose = require('mongoose')
 const Pml = require('./pml');
 
