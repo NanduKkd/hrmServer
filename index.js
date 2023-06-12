@@ -37,6 +37,7 @@ app.use(cookieParser())
 app.use('/api', require('./api'))
 app.use(require('./public.js'))
 
-app.listen(4321, () => {
-	console.log('HRM listening on port 4321')
+const port = process.env.PORT;
+app.listen(port, () => {
+	console.log('HRM listening on port '+port)
 })

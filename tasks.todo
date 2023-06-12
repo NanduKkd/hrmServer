@@ -47,10 +47,10 @@ Total:
 
 
 	Deploy:
-		☐ Push to github
-		☐ Install and run mongodb
-		☐ Install nodejs and git
-		☐ Install pm2
-		☐ Pull from github
-		☐ Run node install
+		✔ Push to github @done(23-06-12 08:50)
+		✔ Install and run mongodb @done(23-06-12 08:50)
+		✔ Install nodejs and git @done(23-06-12 08:50)
+		✔ Install pm2 @done(23-06-12 08:52)
+		✔ Clone from github @done(23-06-12 08:52)
+		✔ Run node install @done(23-06-12 10:00)
 		☐ Run using pm2
