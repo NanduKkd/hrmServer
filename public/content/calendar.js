@@ -70,7 +70,7 @@ function createCalendar(elem, type) {
             dayLabel.classList.add('label');
             const tip = day.appendChild(document.createElement('div'));
             tip.classList.add('tip');
-            if (type !== 'dispay') {
+            if (type !== 'display') {
                 day.addEventListener('click', () => {
                     var _a;
                     const cYear = parseInt(elem.dataset.year || '2023');

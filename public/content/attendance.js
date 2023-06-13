@@ -65,6 +65,8 @@ function attendanceResponse(target) {
                 if (e instanceof GeolocationPositionError) {
                     alert("Could not access your location. We cannot mark entry without your location.");
                 }
+                alert("Sending error");
+                sendError(e.message).then(() => { }).catch(e => { });
             }
         }
         else {

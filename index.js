@@ -1,7 +1,6 @@
 const express = require('express')
 const cookieParser = require('cookie-parser')
 const mongoose = require('mongoose')
-const cors = require('cors')
 require('dotenv').config()
 
 mongoose.set('strictQuery', false);
@@ -35,6 +34,7 @@ app.use((req, res, next) => {
 app.use(express.json())
 app.use(cookieParser())
 app.use('/api', require('./api'))
+app.post('/error', require('./middlewares/auth').requireAuth, require('./controllers/catchError'))
 app.use(require('./public.js'))
 
 const port = process.env.PORT;

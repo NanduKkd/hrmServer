@@ -26,10 +26,7 @@ function pageOnsiteSetup() {
         calendar = document.getElementById('calendar');
         calendar.innerHTML = "";
         calendar.style.display = "block";
-        let unit = getUnit();
-        calendar.style.fontSize = unit + 'px';
-        calendar.style.width = unit * 24 + 'px';
-        createCalendar(calendar, (profile === null || profile === void 0 ? void 0 : profile.superadmin) ? "changer" : "dispay");
+        createCalendar(calendar, (profile === null || profile === void 0 ? void 0 : profile.superadmin) ? "changer" : "display");
         calendar.addEventListener('monthchange', e => {
             fillOnsiteCalendar(parseInt(calendar.dataset.month || '5'), parseInt(calendar.dataset.year || '2001'));
         });

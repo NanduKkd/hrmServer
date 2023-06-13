@@ -19,10 +19,7 @@ async function pageOnsiteSetup() {
 	calendar = document.getElementById('calendar')as HTMLDivElement;
 	calendar.innerHTML = "";
 	calendar.style.display = "block";
-	let unit = getUnit();
-	calendar.style.fontSize = unit+'px'
-	calendar.style.width = unit*24+'px'
-	createCalendar(calendar, profile?.superadmin?"changer":"dispay");
+	createCalendar(calendar, profile?.superadmin?"changer":"display");
 
 	calendar.addEventListener('monthchange', e => {
 		fillOnsiteCalendar(parseInt(calendar.dataset.month || '5'), parseInt(calendar.dataset.year || '2001'))

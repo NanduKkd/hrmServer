@@ -16,12 +16,18 @@ body {
 }
 
 .nav-container {
-	width: 18%;
+	/* width: 18%; */
 	min-width: 16em;
 	font-size: 16px;
 	background-color: #131518;
 	color: #fffc;
 	overflow-y: auto;
+	z-index: 3000;
+
+	position: absolute;
+	width: 100%;
+	top: 60px; bottom: 0; left: 0;
+	display: none;
 }
 
 .nav-header {
@@ -33,7 +39,7 @@ body {
 	height: 3.53125em;
 	width: 3em;
 	font-size: 1.2em;
-	margin: 2em 2em 0 1.8em;
+	margin: 1em 2em 0 1.8em;
 }
 .menu {
 	font-size: 0.7em;
@@ -46,6 +52,9 @@ body {
 	align-items: center;
 	font-size: 0.9em;
 	margin: 0 0.5em;
+}
+#nav-items {
+	margin-bottom: 5em;
 }
 .nav-item:hover {
 	background-color: #fff3;
@@ -110,7 +119,7 @@ body {
 	overflow: auto;
 	flex: 1;
 	background: #f7f7ff;
-	padding: 2em 1em;
+	padding: 1em 0em 8em 0em;
 }
 .list {
 	padding: 1em;
@@ -173,14 +182,14 @@ body {
 
 #new-employee-form, #leave-form {
 	max-width: 35em;
-	padding: 2em;
+	padding: 1em;
 	display: none;
 	justify-content: center;
 	position: relative;
 }
 form {
 	border: solid 1px #0002;
-	padding: 2em;
+	padding: 1em;
 	background-color: #fff;
 }
 .form-back, .profile-back {
@@ -198,8 +207,12 @@ form input, form select, form button, form textarea {
 	display: block;
 	font-size: 16px;
 	height: 30px;
-	min-width: -webkit-fill-available;
+	width: -webkit-fill-available;
 	margin: 0 0 1em 0.5em;
+}
+form input[type="radio"] {
+	width: 12px;
+	height: 12px;
 }
 form textarea {
 	height: 100px;
@@ -207,12 +220,12 @@ form textarea {
 
 form .section {
 	margin: 0 0 1em 0.5em;
-	min-width: -webkit-fill-available;
+	max-width: -webkit-fill-available;
 }
 form .section > input {
 	height: 2em;
 	margin: 0.2em 0;
-	min-width: -webkit-fill-available;
+	max-width: -webkit-fill-available;
 }
 form input[type="radio"].illegal {
 	accent-color: red;
@@ -375,8 +388,8 @@ form input[type="radio"]:disabled+label {
 #profile {
 	max-width: 35em;
 	display: none;
-	padding: 2em;
-	margin: 2em;
+	padding: 1em;
+	margin: 1em;
 	border: solid 1px #0003;
 	border-radius: 8px;
 	background-color: #fff;
@@ -479,9 +492,10 @@ form input[type="radio"]:disabled+label {
 
 #calendar {
 	display: none;
-	font-size: 2vw;
-	margin: 2em;
-	padding: 2em;
+	font-size: 18px;
+	width: calc(100vw - 4em);
+	margin: 1em;
+	padding: 1em;
 	background-color: #fff;
 }
 #calendarChanger {
@@ -629,4 +643,81 @@ td, th {
 
 #notifierForm {
 	display: none;
+}
+
+.display-none {
+	display: none;
+}
+.display-block {
+	display: block;
+}
+.display-flex {
+	display: flex;
+}
+
+
+.mobile-header {
+	display: flex;
+	align-items: stretch;
+	justify-content: flex-start;
+	background: black;
+}
+.header-icon {
+	height: 60px;
+	width: 60px;
+}
+.header-icon svg {
+	height: 100%;
+	width: 100%;
+	stroke: #fff;
+	stroke-width: 1.5;
+	stroke-linecap: round;
+}
+.header-icon:hover svg {
+	stroke: #fffc;
+}
+.header-icon:active svg {
+	stroke: #18acc3;
+}
+@media only screen and (min-width: 786px) {
+	.mobile-header {
+		display: none;
+	}
+	.nav-container {
+		width: 18%;
+		position: relative;
+		display: block;
+		top: 0px;
+	}
+	.body {
+		padding: 2em 1em;
+	}
+	#profile {
+		padding: 2em;
+		margin: 2em;
+	}
+	#calendar {
+		font-size: 20px;
+		width: 480px;
+		padding: 2em;
+		margin: 2em;
+	}
+	#new-employee-form, #leave-form {
+		padding: 2em;
+	}
+	#form {
+		padding: 2em;
+	}
+	.nav-icon {
+		margin: 2em 2em 0 1.8em;
+	}
+	.display-none-desktop {
+		display: none;
+	}
+	.display-block-desktop {
+		display: block;
+	}
+	.display-flex-desktop {
+		display: flex;
+	}
 }

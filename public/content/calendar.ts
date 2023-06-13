@@ -1,4 +1,4 @@
-function createCalendar(elem: HTMLDivElement, type: 'input' | 'dispay' | 'changer') {
+function createCalendar(elem: HTMLDivElement, type: 'input' | 'display' | 'changer') {
 	let changer: HTMLDivElement;
 	
 	let container: HTMLDivElement;
@@ -77,7 +77,7 @@ function createCalendar(elem: HTMLDivElement, type: 'input' | 'dispay' | 'change
 			dayLabel.classList.add('label')
 			const tip = day.appendChild(document.createElement('div'));
 			tip.classList.add('tip');
-			if(type!=='dispay') {
+			if(type!=='display') {
 				day.addEventListener('click', () => {
 					const cYear = parseInt(elem.dataset.year || '2023')
 					const cMonth = parseInt(elem.dataset.month || '0')
