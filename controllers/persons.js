@@ -6,7 +6,7 @@ const holidayModel = require('../models/holiday')
 const pmlModel = require('../models/pml')
 const mongoose = require('mongoose')
 const LeaveManager = require('../utils/leaveManager')
-const leaveChecker = require('../utils/leaveChecker')
+// const leaveChecker = require('../utils/leaveChecker')
 
 exports.get = async(req, res) => {
 	try {
