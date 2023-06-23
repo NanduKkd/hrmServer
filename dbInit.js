@@ -37,7 +37,7 @@ database.once('connected', async() => {
 	const superAdminPerson = new personModel({
 		joiningdate: new Date(2022, 4, 1),
 		monthsprobation: 3,
-		name: "Vijith",
+		name: "Vijith Valassery",
 		email: "vijith@gmail.com",
 		admin: true,
 		superadmin: true,
