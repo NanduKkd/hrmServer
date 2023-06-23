@@ -10,8 +10,24 @@ const database = mongoose.connection
 database.on('error', err => {
 	console.error(err);
 })
-database.once('connected', () => {
+
+const cronjobs = require('./utils/cronjobs')
+const cron = require('node-cron')
+
+database.on('connected', () => {
 	console.log('Database connected')
+	cronjobs.init().then(() => {
+		cronjobs.cronjobs.forEach(i => {
+			if(i.task) i.task.start();
+			else i.task = cron.schedule(i.period, i.job);
+		})
+	})
+})
+database.on('disconnected', () => {
+	console.log('Database disconnected')
+	cronjobs.forEach(i => {
+		if(i.task) i.task.stop()
+	})
 })
 
 

@@ -38,15 +38,18 @@ function showAttendanceStatus(reason?: string) {
 		reason==='late'?'warning':reason==='marked'?'success':null,
 		reason==='leave'
 			?'You are on leave'
-			:reason==='late'?
-				'You are late'
-				:reason==='marked'?
-					'Attendance marked today.'
-					:''
+			:reason==='late'
+				?'You are late'
+				:reason==='marked'
+					?'Attendance marked today.'
+					:reason==='early'
+						?'Too early'
+						:''
 	)
 }
 
 function attendanceMarkerStyle(type: 'open'|'close'|null, labelType: 'warning'|'success'|null, labelMessage: string) {
+	attendanceMarker.classList.remove('loading');
 	attendanceMarker.classList.toggle('close', type==='close');
 	attendanceMarker.classList.toggle('open', type==='open');
 	attendanceLabel.classList.toggle('warning', labelType==='warning')
@@ -55,13 +58,16 @@ function attendanceMarkerStyle(type: 'open'|'close'|null, labelType: 'warning'|'
 }
 
 async function attendanceResponse(target: HTMLButtonElement) {
+	attendanceMarker.classList.add('loading');
 	if(target.dataset.action==='open') {
 		try {
+			await new Promise(res => setTimeout(res, 3000));
 			const location = await getGeolocation()
 			await myfetch('attendance/entry/'+location.coords.latitude+'/'+location.coords.longitude+'/'+location.coords.accuracy, {method: 'POST'});
 			showCloseAttendance();
 		} catch (e: any) {
 			console.error(e);
+			attendanceMarker.classList.remove('loading');
 			if(e instanceof GeolocationPositionError){
 				alert("Could not access your location. We cannot mark entry without your location.")
 			}
@@ -70,7 +76,7 @@ async function attendanceResponse(target: HTMLButtonElement) {
 		}
 	} else {
 		await myfetch('attendance/exit', {method: 'PATCH'})
-		showAttendanceStatus()
+		showAttendanceStatus('marked')
 	}
 }
 

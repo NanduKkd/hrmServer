@@ -6,6 +6,7 @@ type TableDetailedItem = {
 	type: "detailed",
 	title: string,
 	flex?: number,
+	color?: string,
 	subtitle?: string,
 	onclick?: () => void,
 }
@@ -27,7 +28,7 @@ function fillTable(title: string, fields: TableHeader[], rows: TableRow[], onAdd
 		`<div class="list-item">
 			${i.map(j => j.type==='html'? j.html: `
 				<div class="list-item-column${j.onclick?' link':''}"${j.flex?` style="flex: ${j.flex};"`:''}${j.onclick?` onclick="${j.onclick}"`:''}>
-					<div class="list-item-label">${j.title}</div>
+					<div ${j.color?`style="color: ${j.color || '#000'}"`:''} class="list-item-label">${j.title}</div>
 					${j.subtitle?`<div class="list-item-sub-label">${j.subtitle}</div>`:''}
 				</div>
 			`).join('')}

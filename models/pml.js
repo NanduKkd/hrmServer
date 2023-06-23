@@ -46,6 +46,10 @@ const personMonthLeavesSchema = new mongoose.Schema({
 		type: Number,
 		required: true,
 	},
+	redmark: {
+		type: Number,
+		required: true,
+	},
 	takenCL: {
 		type: Number,
 		required: true,

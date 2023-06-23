@@ -11,8 +11,10 @@
 		<script type="application/javascript" src="/content/profile.js"></script>
 		<script type="application/javascript" src="/content/attendance.js"></script>
 		<script type="application/javascript" src="/utils/leavedate.js"></script>
+		<script type="application/javascript" src="/utils/basepml.js"></script>
 		<script type="application/javascript" src="/utils/pml.js"></script>
 		<script type="application/javascript" src="/utils/sendError.js"></script>
+		<script type="application/javascript" src="/utils/monthDataLoader.js"></script>
 		<link type="text/css" rel="stylesheet" href="/style1.css">
 	</head>
 	<body>
@@ -36,6 +38,7 @@
 					<div class="actions">
 						<button data-action="open" onclick="attendanceResponse(this)">Mark Entry</button>
 						<button data-action="close" onclick="attendanceResponse(this)">Mark Exit</button>
+						<div data-action="loading">Loading...</div>
 					</div>
 					<div class="about">Attendance Marker</div>
 				</div>
@@ -52,6 +55,59 @@
 				<div class="info-outer" id="infoOuter">
 					<div class="info-title">Upcoming Events</div>
 					<div class="empty">No upcoming events to show.</div>
+				</div>
+				<div id="totalReport">
+					<div class="report-month-form">
+						<label for="totalReportYear">Year </label>
+						<select id="totalReportYear" data-key="year"></select>
+						<label for="totalReportMonth">Month </label>
+						<select id="totalReportMonth" data-key="month"></select>
+						<button>Load Data</button>
+					</div>
+					<h3>Total leave report</h3>
+					<table>
+						<thead>
+							<tr>
+								<th rowspan="2">Person</th>
+								<th colspan="4">Leave Balance</th>
+								<th colspan="3">Leaves Taken</th>
+								<th colspan="2">Earned</th>
+								<th colspan="4">Final Balance</th>
+								<th rowspan="2">LOP</th>
+							</tr>
+							<tr>
+								<th>P/L</th>
+								<th>C/L</th>
+								<th>S/L</th>
+								<th>Compen..</th>
+								<th>P/L</th>
+								<th>C/L</th>
+								<th>S/L</th>
+								<th>Compen..</th>
+								<th>Redmark</th>
+								<th>P/L</th>
+								<th>C/L</th>
+								<th>S/L</th>
+								<th>Compen..</th>
+							</tr>
+						</thead>
+						<tbody></tbody>
+					</table>
+				</div>
+				<div id="personalReport">
+					<div class="link report-back" onclick="showPersonReport(false)">Back</div>
+					<div class="report-month-form">
+						<label for="personalReportYear">Year </label>
+						<select id="personalReportYear" data-key="year"></select>
+						<label for="personalReportMonth">Month </label>
+						<select id="personalReportMonth" data-key="month"></select>
+						<button>Load Data</button>
+					</div>
+					<h3>Your personal attendance report</h3>
+					<table>
+						<tr><th>Date</th><th>Morning</th><th>Afternoon</th></tr>
+						<tbody></tbody>
+					</table>
 				</div>
 				<div class="list" id="list">
 					<div class="list-title">Title of Table</div>
@@ -261,6 +317,10 @@
 						</div>
 						<div class="field">
 							<div class="field-name">S/L left</div>
+							<div class="field-value">-</div>
+						</div>
+						<div class="field">
+							<div class="field-name">Compensatory left</div>
 							<div class="field-value">-</div>
 						</div>
 						<!-- <div class="field">

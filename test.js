@@ -1,11 +1,12 @@
 const mongoose = require('mongoose')
 const LeaveManager = require('./utils/leaveManager')
-require('dotenv').config()
 const personModel = require('./models/person')
 const leaveModel = require('./models/leave')
+const attendanceModel = require('./models/attendance')
 const pmlModel = require('./models/pml')
 const postModel = require('./models/post')
 const departmentModel = require('./models/department')
+const leaveManager = require('./utils/leaveManager')
 
 const tester = require('./controllers/attendance').personalReport
 
@@ -30,6 +31,7 @@ database.on('error', err => {
 	console.error(err);
 })
 database.once('connected', async() => {
+	await attendanceModel.deleteMany({})
 	await personModel.deleteMany({})
 	await leaveModel.deleteMany({})
 	await pmlModel.deleteMany({})
@@ -67,7 +69,7 @@ database.once('connected', async() => {
 		reason: ''
 	})
 	await l.save()
-	const changes1 = await LeaveManager.onLeave(l, true)
+	await LeaveManager.onLeave(l, true)
 	const l1 = new leaveModel({
 		pid: p._id,
 		period: {
@@ -80,12 +82,28 @@ database.once('connected', async() => {
 		reason: ''
 	})
 	await l1.save()
-	const changes2 = await LeaveManager.onLeave(l1, true)
-	await tester({user: {admin: true}, params: {pid: p._id, year: 2023, month: 3}}, res)
-	await personModel.deleteMany({})
-	await leaveModel.deleteMany({})
-	await pmlModel.deleteMany({})
-	await departmentModel.deleteMany({})
-	await postModel.deleteMany({})
+	await LeaveManager.onLeave(l1, true)
+	const attendance = new attendanceModel({
+		pid: p._id,
+		date: {
+			year: 2023, month: 5, date: 12,
+		},
+		entry: {
+			date: new Date(2023, 5, 12, 12),
+			status: 'beforenoon',
+			location: {
+				latitude: 10.431287,
+				longitude: 72.128327,
+			},
+		},
+		exit: {
+			date: new Date(2023, 5, 12, 5),
+			status: 'evening'
+		},
+		verified: false,
+	})
+	await attendance.save()
+	//await LeaveManager.onAttendanceData(attendance, p.onsite)
+	//await tester({user: {admin: true}, params: {pid: p._id, year: 2023, month: 3}}, res)
 	database.close()
 })

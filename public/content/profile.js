@@ -42,14 +42,17 @@ function showProfile(title, person, backable = true, editable = profile === null
             fields[7].classList.remove('link');
         fields[8].innerText = data.email;
         if (data.pml) {
-            fields[9].innerText = (data.pml.carryPL + data.pml.earnedPL) + '';
-            fields[10].innerText = (data.pml.carryCL + data.pml.earnedCL) + '';
-            fields[11].innerText = (data.pml.carryCL + data.pml.earnedCL) + '';
+            const pml = new PMLCalculator(data.pml);
+            fields[9].innerText = pml.left('P/L') + '';
+            fields[10].innerText = pml.left('C/L') + '';
+            fields[11].innerText = pml.left('S/L') + '';
+            fields[12].innerText = pml.left('Compensatory') + '';
         }
         else {
             fields[9].innerText = '-';
             fields[10].innerText = '-';
             fields[11].innerText = '-';
+            fields[12].innerText = '-';
         }
         // fields[11].innerText = data.simpleReport?.lop?data.simpleReport.lop+' days':'-'
         /*

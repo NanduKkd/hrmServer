@@ -1,4 +1,4 @@
-Total:
+Phase 1:
 
 	My Leaves List:
 		✔ My own leaves @done(23-06-08 12:22)
@@ -53,4 +53,139 @@ Total:
 		✔ Install pm2 @done(23-06-12 08:52)
 		✔ Clone from github @done(23-06-12 08:52)
 		✔ Run node install @done(23-06-12 10:00)
-		☐ Run using pm2
+		✔ Run using pm2 @done(23-06-14 03:10)
+
+Phase 2:
+
+	✘ Disable location requirement temporarily @cancelled(23-06-16 21:12)
+	☐ Connect to hrm subdomain @started(23-06-16 21:12)
+	✔ Add redmark carry and earned fields to pml @done(23-06-17 19:37)
+	New pml calculator:
+		✔ Create new calculator @done(23-06-17 19:37)
+		✔ Use new calculator in every algorithm of leave form frontend @done(23-06-22 07:18)
+		✔ Use new calculator in every algorithm of server @done(23-06-22 07:18)
+	New attendance method:
+		✔ Attendance requests loader @started(23-06-17 23:12) @done(23-06-21 18:29) @lasted(3d19h17m5s)
+			Get list of people reporting attendance to this person
+			Find oldest pending leave request from reporting people
+			Get every requests of that day from reporting people
+			Return every reporting people name, post and person's attendance data if exist
+		✔ Attendance requests display @started(23-06-18 15:22) @done(23-06-21 18:43) @lasted(3d3h21m12s)
+			List every person
+			If person has attendance request
+				If morning status is leave display as leave
+				If person entered and not exited mark as Not Exited
+				If morning status is holiday and person has attended morning display morning as compensatory
+				If morning status does not exist for person
+					If person has attended morning show morning as attended
+					else show morning as redmark
+				else show morning as empty
+				Do above for evening too
+				If attendance exist, not verified, and either user not entered or user has exited show verify button
+		✔ Attendance request respond action @started(23-06-21 18:43) @done(23-06-21 18:50) @lasted(7m15s)
+			Call respond api (below)
+		✔ On attendance request respond function @done(23-06-21 18:55)
+			If day has morning status not marked as leave
+				if person attended morning
+					if morning is marked holiday mark person morning as compensatory
+					else mark person morning as attended
+				else mark person morning status as redmark
+			Do same for evening status
+			Mark day as verified
+			Call on attendance data
+		✔ Leave checker: on attendance data @started(23-06-17 19:53) @done(23-06-21 18:57) @lasted(3d23h4m48s)
+			If day has any redmark sessions increase redmark count
+			If day has any compensatory sessions increase compensatory count
+			Run pml calc for upcoming pml months
+
+		✔ Edit onLeave function @done(23-06-21 20:28)
+			Find all attendance days inside this leave in this month
+			For every attendance day
+				Check morning and evening is in leave
+				If morning is in leave
+					If redmark reduce 0.5 from pml redmark count
+					If compensatory reduce 0.5 from pml compensatory count
+					Change session to leave
+				Do same for evening
+
+		✔ User attendance creator function @done(23-06-21 20:55)
+			Create attendance doc for the user
+			If holiday mark that session as holiday
+			Find verified leaves for that day
+			Mark attendance doc of leave persons as leave for the session
+			If both sessions are leave, mark verified
+
+		✔ Attendance creator timed job @done(23-06-21 21:06)
+			Check if day is full holiday
+			If not
+				if no attendance data has been created for day
+					Run attendance data creator job
+
+		✘ Edit MonthsData getter function @cancelled(23-06-21 21:06)
+			If request has param named special requests as true
+				Get all verified session status attendance data in month
+				Include that as attendance data field
+
+	Leave Class:
+		✔ Get length of leave in a month @done(23-06-21 19:34)
+			Find leave length in month
+			if leave type not p/l
+				find holidays inside leave
+				remove holiday sessions that is part of leave from leave count
+				remove sundays from leave count
+		✔ Check if day is in this leave @done(23-06-21 20:09)
+			Get datestamp of leave start, leave end and of day to check
+			If day < start or day > end
+				both sessions not in leave
+			If day is > start and < end
+				morning and evening is inside leave
+			if start = end
+				if start fullday morning is leave
+				if end fullday evening is leave
+			if day = start
+				if start is fullday morning and evening is inside leave
+				else morning is not leave and evening is leave
+			if day = end
+				if end is fullday morning and evening is inside leave
+				else morning is not leave and evening is leave
+		✔ Static: Find leave which includes that day, return morning and evening status @done(23-06-21 20:09)
+			From collection find leaves that includes this given day
+			For each leave,
+				check if day includes in this leave using above function, and mark
+				if both morning and evening have been marked, return data
+			return data
+	New cron job manager:
+		✔ List of timed jobs data @done(23-06-22 06:53)
+			Constant list functions (which are timed jobs) and their cron repeat period string
+				Attendance creator timed job, every day
+				PML checker timed job, every month
+		✔ Cron job manager @done(23-06-22 07:08)
+			Run all timed jobs
+			Start cron and assign timed jobs
+		✘ CRON_ASSIGN in dotenv file @cancelled(23-06-22 07:08)
+			CRON_ASSIGN in dotenv file, set to false as default
+
+	Session-wise data of employee of selected month:
+		Leave (type), Leave (type, LOP), Attended, Attended (Holiday/Sunday, Compensatory), -, Red mark, Holiday/Sunday
+
+		Leave balance (month start): type
+		Leaves taken- types
+		Earned - compensatory, redmark
+		Final balance- types
+		LOP
+		✔ Backend controller code retrieve and respond with session data @done(23-06-23 06:39)
+		UI:
+			✔ Get year and month and person (for admin only) from url query on page load @done(23-06-23 06:39)
+			✔ On input field change edit url queries silently @done(23-06-23 06:39)
+			✔ Session table with 3 cols and n+1 rows @done(23-06-23 06:39)
+			✔ Summary report table of month @done(23-06-23 06:39)
+		✔ Call API and retrieve data of month, year and person @done(23-06-23 06:39)
+		✔ Set session tale and summary table @done(23-06-23 06:39)
+
+	Edit session data by superadmin:
+		☐ Superadmin should be able to somehow select non-leave sessions, and select edit, and toggle attendance
+		☐ Call API to edit data
+		☐ Backend controller to receive edit result and update data
+		☐ Append item to table
+		☐ Summarize again
+		☐ Show summary data

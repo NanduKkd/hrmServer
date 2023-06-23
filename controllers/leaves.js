@@ -269,7 +269,8 @@ exports.post = async(req, res) => {
 		}
 		await leave.save()
 		res.status(201).json(leave);
-		// await LeaveManager.onLeave(leave, true)
+		if(leave.status==='Accepted')
+			await LeaveManager.onLeave(leave, true)
 	} catch (e) {
 		console.error(e)
 		res.status(500).end()
@@ -375,14 +376,14 @@ exports.getMonthsData = async(req, res) => {
 	try {
 		const mys = req.body.mys;
 		const pmls = await pmlModel.aggregate([
+			{$set: {my: {$add: [{$multiply: ['$year', 12]}, '$month']}}},
 			{$match: {$expr: {$and: [
 				{$in: [
-					{$add: ['$month', {$multiply: ['$year', 12]}]}
+					'$my'
 					, mys
 				]},
 				{$eq: ['$person', req.user._id]},
 			]}}},
-			{$set: {my: {$add: [{$multiply: ['$year', 12]}, '$month']}}},
 		])
 		const holidays = await holidayModel.find({$expr: {$and: [
 			{$in: [

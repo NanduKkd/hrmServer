@@ -8,55 +8,32 @@ const {
 
 const statuser = async(person) => {
 	const now = new Date();
-	const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-	const todayDs = new LeaveDate(now.getFullYear(), now.getMonth(), now.getDate(), 1).getDatestamp();
-	const lastMarks = await attendanceModel.find({pid: person._id}).sort({'entry.date': -1}).limit(1)
-	if(lastMarks.length && !lastMarks[0].exit?.date) {
-		if(lastMarks[0].date.year !== now.getFullYear() || lastMarks[0].date.month !== now.getMonth() || lastMarks[0].date.date !== now.getDate())
+	const openMark = await attendanceModel.findOne({pid: person._id, 'entry.status': {$exists: true}, 'exit.status': {$exists: false}})
+	if(openMark) {
+		if(openMark.date.year !== now.getFullYear() || openMark.date.month !== now.getMonth() || openMark.date.date !== now.getDate())
 			return {status: 'open', warning: true};
 		else
 			return {status: 'open'};
-	} else if(
-		lastMarks.length
-		&& lastMarks[0].date.year===now.getFullYear()
-		&& lastMarks[0].date.month===now.getMonth()
-		&& lastMarks[0].date.date===now.getDate()
-	) {
-		return {status: 'empty', reason: 'marked'}
-	}
-	const hrs = toHrs(now);
-	const leaves = await leaveModel.find({$expr: {$and: [
-		{$lte: [
-			{$dateFromString: {dateString: {$substr: ['$period.from', 0, 10]}, format: '%d-%m-%Y', timezone: '+0530'}},
-			today
-		]},
-		{$gte: [
-			{$dateFromString: {dateString: {$substr: ['$period.to', 0, 10]}, format: '%d-%m-%Y', timezone: '+0530'}},
-			today
-		]},
-		{$eq: ['$status', 'Accepted']},
-		{$eq: ['$pid', person._id]},
-	]}})
-	for(let l of leaves) {
-		const fromLD = LeaveDate.fromString(l.period.from)
-		const toLD = LeaveDate.fromString(l.period.to)
-		if(fromLD.getDatestamp()===todayDs && !fromLD.fullday) {
-			if(hrs<MorningClosing) continue;
+	} else {
+		const hrs = toHrs(now);
+		const todayMark = await attendanceModel.findOne({pid: person._id, 'date.year': now.getFullYear(), 'date.month': now.getMonth(), 'date.date': now.getDate()})
+		if(todayMark) {
+			if(todayMark.entry?.status && todayMark?.exit?.status) return {status: 'empty', reason: 'marked'}
+			let sessionMark;
+			if(hrs<EveningOpening) sessionMark = todayMark.morning
+			else if(hrs>=EveningOpening) sessionMark = todayMark.evening
+			if(sessionMark==='leave')
+				return {status: 'empty', reason: 'leave'}
 		}
-		if(toLD.getDatestamp()===todayDs && !toLD.fullday) {
-			if(hrs>=EveningOpening) continue;
+		if(hrs<MorningOpening) {
+			return {status: 'empty', reason: 'early'};
+		} else if(hrs>=MorningClosing && hrs<EveningOpening) {
+			return {status: 'empty', reason: 'late'}
+		} else if(hrs>=EveningClosing) {
+			return {status: 'empty', reason: 'late'};
 		}
-		return {status: 'empty', reason: 'leave'};
-		//TODO check cancellations in leaves
+		return {status: 'ready'}
 	}
-	if(hrs<MorningOpening) {
-		return {status: 'empty', reason: 'early'};
-	} else if(hrs>=MorningClosing && hrs<EveningOpening) {
-		return {status: 'empty', reason: 'late'}
-	} else if(hrs>=EveningClosing) {
-		return {status: 'empty', reason: 'late'};
-	}
-	return {status: 'ready'}
 }
 
 function toHrs (d) {

@@ -46,15 +46,13 @@ const routes = {
         otherscript: "/leaveform.js",
         navbar: true,
     },
-    // "/leavereport.html": {
-    // 	title: "Leave Report",
-    // 	hidden: {
-    // 		employee: true,
-    // 	},
-    // 	isAuth: true,
-    // 	script: "/leavereport.js",
-    // 	navbar: true,
-    // },
+    "/reports.html": {
+        title: "Reports",
+        hidden: {},
+        isAuth: true,
+        script: "/reports.js",
+        navbar: true,
+    },
     "/employees.html": {
         title: "Employees",
         hidden: {},

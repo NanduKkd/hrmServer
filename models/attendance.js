@@ -8,23 +8,17 @@ const attendanceSchema = new mongoose.Schema({
 	entry: {
 		date: {
 			type: Date,
-			required: true,
-			default: Date.now,
 		},
 		status: {
 			type: String,
-			required: true,
 			enum: ['morning', 'beforenoon', 'afternoon'],
-			default: 'morning'
 		},
 		location: {
 			latitude: {
 				type: Number,
-				required: true,
 			},
 			longitude: {
 				type: Number,
-				required: true,
 			},
 		},
 	},
@@ -59,11 +53,13 @@ const attendanceSchema = new mongoose.Schema({
 			required: true,
 		},
 	},
-	markmorning: {
-		type: Boolean,
+	morning: {
+		type: String,
+		enum: ['attended', 'holiday', 'compensatory', 'leave', 'redmark'],
 	},
-	markevening: {
-		type: Boolean,
+	evening: {
+		type: String,
+		enum: ['attended', 'holiday', 'compensatory', 'leave', 'redmark'],
 	},
 	verified: {
 		type: Boolean,

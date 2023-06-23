@@ -3,14 +3,16 @@ const {
 	MorningClosing, EveningClosing, MorningEnd, EveningEnd
 } = require('../../utils/constants')
 const LeaveDate = require('../../utils/leavedate')
+const LeaveManager = require('../../utils/leaveManager')
 
 module.exports = async(req, res) => {
 	try {
 		const now = new Date();
-		const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 		const att = await attendanceModel.findOne({
 			pid: req.user._id,
-			'exit.date': {$exists: false},
+			'date.date': now.getDate(),
+			'date.month': now.getMonth(),
+			'date.year': now.getFullYear(),
 		})
 		const exitTime = now;
 		att.exit = {
@@ -20,8 +22,8 @@ module.exports = async(req, res) => {
 				longitude: req.body.longitude,
 			},
 		};
-		const todayDs = new LeaveDate(today.getFullYear(), today.getMonth(), today.getDate()).getDatestamp();
-		const attDs = new LeaveDate(att.date.year, att.date.month, att.date.date);
+		const todayDs = new LeaveDate(now.getFullYear(), now.getMonth(), now.getDate()).getDatestamp();
+		const attDs = new LeaveDate(att.date.year, att.date.month, att.date.date).getDatestamp();
 		const nowHrs = getHrs(now);
 		if(attDs!==todayDs)
 			att.exit.status = 'anotherday'
@@ -33,18 +35,15 @@ module.exports = async(req, res) => {
 			att.exit.status = 'evening'
 
 		if(req.user.superadmin) {
-			att.markmorning = att.entry.status==='morning' && att.exit.status!=='beforenoon';
-			att.markevening = att.entry.status in ['morning', 'beforenoon'] && !(att.exit.status in ['beforenoon', 'afternoon'])
+			if(att.morning!=='leave') att.morning = att.entry.status==='morning' && att.exit.status!=='beforenoon'?att.morning==='holiday'?'compensatory':'attended':att.morning==='holiday'?'holiday':'redmark';
+			if(att.evening!=='leave') att.evening = att.entry.status!=='afternoon' && att.exit.status!=='beforenoon' && att.exit.status!=='afternoon'?att.evening==='holiday'?'compensatory':'attended':att.evening==='holiday'?'holiday':'redmark';
 			att.verified = true;
 		}
-
-		/*
-		// Should be marked by reporting person
-		att.markmorning = att.entry.status==='morning' && att.exit.status!=='beforenoon';
-		att.markevening = att.entry.status in ['morning', 'beforenoon'] && !(att.exit.status in ['beforenoon', 'afternoon'])
-		*/
 		await att.save();
 		res.status(204).end()
+		if(req.user.superadmin) {
+			await LeaveManager.onAttendanceData(att);
+		}
 	} catch (e) {
 		console.error(e)
 		res.status(500).end()

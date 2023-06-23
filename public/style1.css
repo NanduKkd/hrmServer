@@ -192,7 +192,8 @@ form {
 	padding: 1em;
 	background-color: #fff;
 }
-.form-back, .profile-back {
+.form-back, .profile-back, .report-back {
+	width: fit-content;
 	font-size: 15px;
 	padding: 0.5em;
 	margin-bottom: 1em;
@@ -603,7 +604,7 @@ td, th {
 	display: none;
 	margin: 0.5em 0;
 }
-#attendanceMarker.open .actions, #attendanceMarker.close .actions {
+#attendanceMarker.open .actions, #attendanceMarker.close .actions, #attendanceMarker.loading .actions {
 	display: flex;
 }
 #attendanceMarker .actions button {
@@ -616,6 +617,9 @@ td, th {
 	border-radius: 5px;
 	color: #fff;
 }
+#attendanceMarker .actions div {
+	display: none;
+}
 #attendanceMarker .actions button:hover {
 	background: #fff2;
 }
@@ -626,6 +630,12 @@ td, th {
 	display: block;
 }
 #attendanceMarker.close .actions button[data-action='close'] {
+	display: block;
+}
+#attendanceMarker.loading .actions button[data-action] {
+	display: none;
+}
+#attendanceMarker.loading .actions div[data-action='loading'] {
 	display: block;
 }
 #attendanceMarker .about {
@@ -679,6 +689,26 @@ td, th {
 .header-icon:active svg {
 	stroke: #18acc3;
 }
+
+#personalReport, #totalReport {
+	width: fit-content;
+	display: none;
+	margin: 1em;
+	padding: 2em;
+	background-color: white;
+	border-radius: 10px;
+	border: solid 1px #0002;
+}
+td.empty-box {
+	color: #0007;
+}
+.report-month-form select {
+	margin-right: 1em;
+}
+.report-month-form {
+	margin: 0 0 2em 0;
+}
+
 @media only screen and (min-width: 786px) {
 	.mobile-header {
 		display: none;

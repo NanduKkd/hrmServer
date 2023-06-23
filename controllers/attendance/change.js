@@ -10,8 +10,8 @@ module.exports = async(req, res) => {
 				'date.month': parseInt(req.params.month)-1,
 				'date.date': req.params.date
 			}, {$set: {
-				markmorning: req.body.morning,
-				markevening: req.body.evening
+				morning: req.body.morning,
+				evening: req.body.evening
 			}})
 		} else {
 			res.status(403).end()

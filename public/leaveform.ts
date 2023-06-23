@@ -4,7 +4,6 @@ let leaveType: LeaveType,
 	fromDate: string | undefined,
 	fromFullDay: boolean | undefined,
 	fromLD: LeaveDate | undefined,
-	calendarData: MonthData[] = [],
 	leaveLegalEndDate: LeaveDate,
 	leaveIllegalEndDate: LeaveDate,
 	toDate: string | undefined,
@@ -177,38 +176,13 @@ async function onMonthChange(isFrom: boolean, year: number, month: number): Prom
 	let cmy: number;
 	cmy = month + year*12;
 	loadNearby(cmy)
-	if(!calendarData.find(i => i.my===cmy)) {
-		fromDateInput.dataset.cmy = cmy+'';
-		renderLoadingMonth(isFrom?fromDateInput:toDateInput)
-	} else if(isFrom) renderFromMonth(cmy)
+	renderLoadingMonth(isFrom?fromDateInput:toDateInput)
+	await getMonth(cmy);
+	if(isFrom) renderFromMonth(cmy)
 	else renderToMonth(cmy)
 }
 
 
-interface MonthsLoader {
-	loading?: number[],
-	loaded?: MonthData[],
-	(mys: number[]): Promise<MonthData[]>,
-}
-
-const getMonths: MonthsLoader = async function(mys) {
-	//TODO implement loaded data getter
-	if(!mys.length) return [];
-
-	const monthsData = (await myfetch("leaves/monthsdata", {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify({mys}),
-	})).data as MonthData[];
-	calendarData.push(...monthsData);
-	return monthsData;
-}
-
-async function getMonth(my: number) {
-	return (await getMonths([my]))[0];
-}
 /*
 async function loadMonths(my: number): Promise<MonthData>
 async function loadMonths(mys: number[]): Promise<void>
@@ -229,7 +203,8 @@ async function loadMonths(mys: number | number[]): Promise<MonthData | void> {
 
 async function loadNearby(my: number) {
 	const avail = [];
-	for(let i of calendarData) {
+	if(!getMonths.loaded) getMonths.loaded = [];
+	for(let i of getMonths.loaded) {
 		if(i.my>=my-3 || i.my<=my+3) {
 			avail.push(i.my);
 		}
@@ -298,8 +273,7 @@ async function renderFromMonth(my: number) {
 	const month = my % 12
 	const year = Math.floor(my/12)
 
-	const monthData = calendarData.find(i => i.my===my)
-	if(!monthData) throw new Error("Render calendar month called without month data (renderFromMonth)")
+	const monthData = await getMonth(my)
 
 	if(!leaveType || !monthData.pml) {
 		return renderCalendar(
@@ -311,7 +285,8 @@ async function renderFromMonth(my: number) {
 			), month, year
 		)
 	}
-	const available = new Pml(monthData.pml).available(leaveType);
+	//const available = leavesLeft(monthData.pml, leaveType);
+	const available = new PMLCalculator(monthData.pml).available(leaveType);
 	const datesArray: CalFixedDay[] = makeMonthDatesArray(month, year);
 	for(let i of monthData.leaves) {
 		disableLeaveDates(i, monthData.my, datesArray);
@@ -376,22 +351,53 @@ async function onTypeSelected(type: LeaveType) {
 
 async function onFromSelected(date: string) {
 	fromDate = date;
+
+	let morningStatus: SessionLegal = 'legal', noonStatus: SessionLegal = 'legal'
 	const _d = LeaveDate.fromInput(date, '1')
-	const monthData = calendarData.find(i => i.my===_d.getMy())
-	if(!monthData) throw new Error("Date in month selected, but month data not loaded? (onFromSelected)")
-	const available = new Pml(monthData.pml).available(leaveType)
+	const monthData = await getMonth(_d.getMy())
+	const available = new PMLCalculator(monthData.pml).available(leaveType);
+
+
+	if(available<=0) {
+		morningStatus = 'special';
+		noonStatus = 'special';
+	}
+
 	const dateHoliday = monthData.holidays.find(i => i.year===_d.year && i.month===_d.month && i.date===_d.date);
+	if(dateHoliday?.morning) morningStatus = 'illegal';
+	if(dateHoliday?.evening) noonStatus = 'illegal'
+
+	for(let i of monthData.leaves) {
+		const fLd = LeaveDate.fromString(i.period.from);
+		const tLd = LeaveDate.fromString(i.period.to);
+		if(fLd.getDatestamp()===_d.getDatestamp() && tLd.getDatestamp()===_d.getDatestamp()) {
+			if(fLd.fullday) morningStatus = 'illegal';
+			if(tLd.fullday) noonStatus = 'illegal';
+		} else if(fLd.getDatestamp()===_d.getDatestamp()) {
+			if(fLd.fullday) morningStatus = 'illegal';
+			noonStatus = 'illegal';
+		} else if(fLd.getDatestamp()===_d.getDatestamp()) {
+			if(fLd.fullday) noonStatus = 'illegal';
+			morningStatus = 'illegal';
+		} else if(fLd.getDatestamp()<_d.getDatestamp() && tLd.getDatestamp()>_d.getDatestamp()) {
+			morningStatus = noonStatus = 'illegal';
+		}
+	}
 
 	const now = new Date();
 	const todayDS = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())/24/3600000;
 
 	resetFromHalfDay();
 
-	(fromFulldayInput['0'] as HTMLInputElement).disabled = dateHoliday?.morning || leaveType==='P/L' && (available===0 || todayDS+30>_d.getDatestamp());
-	(fromFulldayInput['0'] as HTMLInputElement).classList.toggle('illegal', !(dateHoliday?.morning || (available>0 && todayDS<=_d.getDatestamp())));
+	// (fromFulldayInput['0'] as HTMLInputElement).disabled = dateHoliday?.morning || leaveType==='P/L' && (available===0 || todayDS+30>_d.getDatestamp());
+	// (fromFulldayInput['0'] as HTMLInputElement).classList.toggle('illegal', !(dateHoliday?.morning || (available>0 && todayDS<=_d.getDatestamp())));
 
-	(fromFulldayInput['1'] as HTMLInputElement).disabled = dateHoliday?.evening || leaveType==='P/L' && (available===0 || todayDS+30>_d.getDatestamp());
-	(fromFulldayInput['1'] as HTMLInputElement).classList.toggle('illegal', !(dateHoliday?.evening || (available>0 && todayDS<=_d.getDatestamp())));
+	// (fromFulldayInput['1'] as HTMLInputElement).disabled = dateHoliday?.evening || leaveType==='P/L' && (available===0 || todayDS+30>_d.getDatestamp());
+	// (fromFulldayInput['1'] as HTMLInputElement).classList.toggle('illegal', !(dateHoliday?.evening || (available>0 && todayDS<=_d.getDatestamp())));
+	(fromFulldayInput['0'] as HTMLInputElement).disabled = morningStatus==='illegal';
+	(fromFulldayInput['0'] as HTMLInputElement).classList.toggle('illegal', morningStatus==='special');
+	(fromFulldayInput['1'] as HTMLInputElement).disabled = noonStatus==='illegal';
+	(fromFulldayInput['1'] as HTMLInputElement).classList.toggle('illegal', noonStatus==='special');
 }
 
 async function onFromHalfSelected(isFullDay: boolean) {
@@ -402,9 +408,8 @@ async function onFromHalfSelected(isFullDay: boolean) {
 	fromFullDay = isFullDay
 	fromLD = LeaveDate.fromInput(fromDate, isFullDay?'1':'0')
 	let lastMy = fromLD.getMy()
-	let monthData = calendarData.find(i => i.my === lastMy)
-	if(!monthData) throw new Error("Half in month selected, but month data not loaded? (onFromHalfSelected)")
-	let leavesAvailable = Pml.availableFromData(monthData.pml, leaveType)
+	let monthData = await getMonth(lastMy)
+	const pml = new PMLCalculator(monthData.pml);
 	let day = LeaveDate.fromString(fromLD.toString())
 	let lastLegal = day, lastIllegal = day, legalEnd=false;
 	while1:
@@ -416,11 +421,11 @@ async function onFromHalfSelected(isFullDay: boolean) {
 			}
 		}
 		const thisHoliday = (monthData.holidays.find(i => i.year===day.year && i.month===day.month && i.date===day.date && (day.fullday?i.morning:i.evening))?true:false) || new Date(day.year, day.month, day.date).getDay()===0
-		if(leaveType==='P/L') leavesAvailable -= 0.5;
+		if(leaveType==='P/L') pml.addCount(0.5, leaveType);
 		else {
 			if(thisHoliday) {
 				// do nothing
-			} else leavesAvailable -= 0.5;
+			} else pml.addCount(0.5, leaveType);
 		}
 
 		if(!thisHoliday) {
@@ -428,7 +433,7 @@ async function onFromHalfSelected(isFullDay: boolean) {
 			lastIllegal = day;
 		}
 
-		if(leavesAvailable<=0) {
+		if(pml.available(leaveType)<=0) {
 			legalEnd = true;
 			if(leaveType==='P/L') break;
 		}
@@ -439,18 +444,7 @@ async function onFromHalfSelected(isFullDay: boolean) {
 			if(day.getMy()>nmy+6) {
 				break;
 			}
-			monthData = calendarData.find(i => i.my === day.getMy())
-			if(!monthData) {
-				console.log('fetching')
-				monthData = await getMonth(day.getMy());
-				console.log('got monthdata', monthData);
-				calendarData.push(monthData)
-				const pml = new Pml(monthData.pml)
-				if(pml.year!==Math.floor(lastMy/12) && pml.month===0)
-					leavesAvailable = Math.min(leavesAvailable, pml.carry(leaveType)) + pml.earned(leaveType)
-				else
-					leavesAvailable += pml.earned(leaveType)
-			}
+			monthData = await getMonth(day.getMy());
 			lastMy = day.getMy()
 		}
 	}
@@ -483,7 +477,7 @@ async function onToSelected(date: string) {
 	if(fromLD.getDatestamp()===toDS && !fromLD.fullday) noonStatus = 'illegal';
 
 	const toMy = _toLD.getMy()
-	const monthData = calendarData.find(i => i.my===toMy);
+	const monthData = await getMonth(toMy);
 	if(!monthData) throw new Error("Date in month selected, but month data not loaded? (onToSelected)")
 
 	const dateHoliday = monthData.holidays.find(i => i.year===_toLD.year && i.month===_toLD.month && i.date===_toLD.date);
@@ -507,22 +501,26 @@ async function onToHalfSelected(isFullDay: boolean) {
 	toLD = LeaveDate.fromInput(toDate, isFullDay?'1':'0')
 	function incrLeave(): void {
 		leaveLength! += 0.5;
-		if(leavesAvailable>0) leavesAvailable -= 0.5;
-		else {
+		if(pml.available(leaveType)<=0) {
 			if(leaveType==='P/L') throw new Error("Illegal leaves: P/L count should not be more than avalable!")
 			lopDays! += 0.5;
 		}
+		pml.addCount(0.5, leaveType);
 	}
-	let monthData = calendarData.find(i => i.my === lastMy)
-	if(!monthData) throw new Error("Date in month selected, but month data not loaded? (onToSelected)")
-	let leavesAvailable = Pml.availableFromData(monthData.pml, leaveType)
+	let monthData = await getMonth(lastMy);
+	const pml = new PMLCalculator(monthData.pml);
 	let day = LeaveDate.fromDatestamp(fromLD.getDatestamp())
 	day.fullday = !fromLD.fullday
 	while(toLD.getDatestamp()>day.getDatestamp() || day.getDatestamp()===toLD.getDatestamp() && (toLD.fullday || !day.fullday)) {
 		if(leaveType==='P/L') {
 			incrLeave()
 		} else {
-			const thisHoliday = (monthData.holidays.find(i => i.year===day.year && i.month===day.month && i.date===day.date && (day.fullday?i.evening:i.morning))?true:false) || new Date(day.year, day.month, day.date).getDay()===0
+			const thisHoliday = (monthData.holidays.find(i =>
+				i.year===day.year
+				&& i.month===day.month
+				&& i.date===day.date
+				&& (day.fullday?i.evening:i.morning)
+			)?true:false) || new Date(day.year, day.month, day.date).getDay()===0
 			if(thisHoliday) {
 				// do nothing
 			} else {
@@ -535,15 +533,8 @@ async function onToHalfSelected(isFullDay: boolean) {
 			day.fullday = false;
 		}
 		if(day.getMy()!==lastMy) {
-			monthData = calendarData.find(i => i.my === day.getMy())
-			if(!monthData) {
-				monthData = await getMonth(day.getMy());
-				const pml = new Pml(monthData.pml)
-				if(pml.year!==Math.floor(lastMy/12) && pml.month===0)
-					leavesAvailable = Math.min(leavesAvailable, pml.carry(leaveType)) + pml.earned(leaveType)
-				else
-					leavesAvailable += pml.earned(leaveType)
-			}
+			monthData = await getMonth(day.getMy());
+			await pml.nextMonth();
 			lastMy = day.getMy()
 		}
 	}
@@ -569,7 +560,7 @@ async function renderToMonth(my: number) {
 		)
 	}
 
-	const monthData = calendarData.find(i => i.my===my)
+	const monthData = await getMonth(my)
 	if(!monthData) throw new Error("Render calendar month called without month data (renderFromMonth)")
 	const datesArray: CalFixedDay[] = makeMonthDatesArray(month, year);
 	for(let i of monthData.leaves) {

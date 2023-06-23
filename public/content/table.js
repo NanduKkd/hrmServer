@@ -8,7 +8,7 @@ function fillTable(title, fields, rows, onAdd, tbl = table) {
     tbl.querySelector('.list-item.list-header').insertAdjacentHTML('afterend', rows === null || rows === void 0 ? void 0 : rows.map(i => (`<div class="list-item">
 			${i.map(j => j.type === 'html' ? j.html : `
 				<div class="list-item-column${j.onclick ? ' link' : ''}"${j.flex ? ` style="flex: ${j.flex};"` : ''}${j.onclick ? ` onclick="${j.onclick}"` : ''}>
-					<div class="list-item-label">${j.title}</div>
+					<div ${j.color ? `style="color: ${j.color || '#000'}"` : ''} class="list-item-label">${j.title}</div>
 					${j.subtitle ? `<div class="list-item-sub-label">${j.subtitle}</div>` : ''}
 				</div>
 			`).join('')}
