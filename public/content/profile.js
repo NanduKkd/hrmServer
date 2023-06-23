@@ -42,11 +42,11 @@ function showProfile(title, person, backable = true, editable = profile === null
             fields[7].classList.remove('link');
         fields[8].innerText = data.email;
         if (data.pml) {
-            const pml = new PMLCalculator(data.pml);
-            fields[9].innerText = pml.left('P/L') + '';
-            fields[10].innerText = pml.left('C/L') + '';
-            fields[11].innerText = pml.left('S/L') + '';
-            fields[12].innerText = pml.left('Compensatory') + '';
+            const cys = new PMLCalculator(data.pml).nextMonthCarrys();
+            fields[9].innerText = cys.carryPL + '';
+            fields[10].innerText = cys.carryCL + '';
+            fields[11].innerText = cys.carrySL + '';
+            fields[12].innerText = cys.carryCompensatory + '';
         }
         else {
             fields[9].innerText = '-';

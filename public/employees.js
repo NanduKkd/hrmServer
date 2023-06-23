@@ -88,8 +88,8 @@ function newEmployee() {
 		department: form.department.value,
 		post: form.post.value,
 		admin: form.admin.checked,
-		leavereportingperson: form.admin.checked?undefined:form.leavereportingperson.value,
-		attendancereportingperson: form.admin.checked?undefined:form.attendancereportingperson.value,
+		leavereportingperson: form.leavereportingperson.value,
+		attendancereportingperson: form.attendancereportingperson.value,
 		joiningdate: form.joiningdate.value,
 		monthsprobation: parseInt(form.monthsprobation.value),
 		onsite: form.onsite.checked

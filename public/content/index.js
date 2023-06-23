@@ -136,10 +136,10 @@ function setupForm() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const form = newEmployeeForm.children[0];
-            form.admin.onclick = () => {
-                form.leavereportingperson.disabled = form.admin.checked;
-                form.attendancereportingperson.disabled = form.admin.checked;
-            };
+            // form.admin.onclick = () => {
+            // 	form.leavereportingperson.disabled = form.admin.checked
+            // 	form.attendancereportingperson.disabled = form.admin.checked
+            // }
             if (form.department.options.length === 1) {
                 form.department.innerHTML += (yield myfetch('departments/'))
                     .data

@@ -164,10 +164,10 @@ function editPersonForm(person: EmployeeProfile) {
 async function setupForm(): Promise<HTMLFormElement> {
 	try {
 		const form = newEmployeeForm.children[0] as HTMLFormElement
-		form.admin.onclick = () => {
-			form.leavereportingperson.disabled = form.admin.checked
-			form.attendancereportingperson.disabled = form.admin.checked
-		}
+		// form.admin.onclick = () => {
+		// 	form.leavereportingperson.disabled = form.admin.checked
+		// 	form.attendancereportingperson.disabled = form.admin.checked
+		// }
 		if(form.department.options.length===1) {
 			form.department.innerHTML += (await myfetch('departments/'))
 				.data
