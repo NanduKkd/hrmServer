@@ -7,6 +7,7 @@ const mongoose = require('mongoose')
 const LeaveDate = require('./leavedate')
 const PMLCalculator = require('./pml')
 const Leave = require('./leave');
+const emailer = require('./emailer')
 
 exports.checker = async function() {
 	const now = new Date();
@@ -147,54 +148,6 @@ exports.onLeave = async function (leave, applyChange) {
 	if(!applyChange) return changes
 }
 
-const dayStatus = async(attendance, onsite) => {
-	let morning = '', evening = '';
-	if(attendance.markmorning) morning = 'attended'
-	if(attendance.markevening) evening = 'attended';
-
-	const thisDay = new Date(attendance.date.year, attendance.date.month, attendance.date.date);
-	const thisDayDs = new LeaveDate(attendance.date.year, attendance.date.month, attendance.date.date, 1).getDatestamp();
-	const leaves = await leaveModel.find({$expr: {$and: [
-		{$lte: [
-			{$dateFromString: {dateString: {$substr: ['$period.from', 0, 10]}, format: '%d-%m-%Y', timezone: '+0530'}},
-			thisDay
-		]},
-		{$gte: [
-			{$dateFromString: {dateString: {$substr: ['$period.to', 0, 10]}, format: '%d-%m-%Y', timezone: '+0530'}},
-			thisDay
-		]},
-		{$eq: ['$status', 'Accepted']},
-		{$eq: ['$pid', attendance.pid]},
-	]}})
-	for(let l of leaves) {
-		const fromLD = LeaveDate.fromString(l.period.from)
-		const toLD = LeaveDate.fromString(l.period.to)
-		if(fromLD.getDatestamp()===thisDayDs && !fromLD.fullday)
-			morning = 'leave'
-		else if(toLD.getDatestamp()===thisDayDs && !toLD.fullday)
-			evening = 'leave'
-		else
-			morning = evening = 'leave'
-		if(morning === evening && evening === 'leave') return {morning, evening};
-	//TODO check cancellations in leaves
-	}
-	const holiday = await holidayModel.findOne({
-		year: attendance.date.year,
-		month: attendance.date.month,
-		date: attendance.date.date,
-		onsite,
-	})
-	if(holiday?.morning || thisDay.getDay()===0) {
-		if(morning==='attended') morning = 'compensatory'
-		else if(!morning) morning = 'holiday'
-	}
-	if(holiday?.evening || thisDay.getDay()===0) {
-		if(evening==='attended') evening = 'compensatory'
-		else if(!evening) evening = 'holiday'
-	}
-	return {morning, evening}
-}
-
 const attendanceCreator = async(date, location, isFullHoliday) => {
 	const attendances = [];
 	const people = [...(await personModel.find({onsite: location==='onsite'}, {onsite: 1, _id: 1, name: 1}))]
@@ -331,24 +284,27 @@ exports.filterLeaves = async(list, isLegal) => {
 	const now = new Date();
 	const today = new LeaveDate(now.getFullYear(), now.getMonth(), now.getDate()).getDatestamp();
 	for(const leave of list) {
-		const requestTime = new Date(leave.createdAt);
-		const requestDate = new LeaveDate(requestTime.getFullYear(), requestTime.getMonth(), requestTime.getDate()).getDatestamp();
 		let _legal = true;
-		const fromLD = LeaveDate.fromString(leave.period.from)
-		const toLD = LeaveDate.fromString(leave.period.to)
-		const frommy = fromLD.month+fromLD.year*12, tomy = toLD.month+toLD.year*12;
-		const endmy = now.getFullYear()*12 + now.getMonth() + 6;
-		if(fromLD.getDatestamp()<requestDate || fromLD.getDatestamp()<today || requestDate+1<today) _legal = false
+		if(leave.noresponse) _legal = false;
 		else {
-			let pml = await PMLCalculator.loadData(frommy-1, leave.pid);
-			while(pml.my<endmy && _legal) {
-				await pml.nextMonth()
-				const len = await calculateMonthLeaveLen(fromLD, frommy, toLD, tomy, pml.my, leave.type, leave.pid)
-				if(pml.available(leave.type) < len) {
-					_legal = false;
-					break;
+			const requestTime = new Date(leave.createdAt);
+			const requestDate = new LeaveDate(requestTime.getFullYear(), requestTime.getMonth(), requestTime.getDate()).getDatestamp();
+			const fromLD = LeaveDate.fromString(leave.period.from)
+			const toLD = LeaveDate.fromString(leave.period.to)
+			const frommy = fromLD.month+fromLD.year*12, tomy = toLD.month+toLD.year*12;
+			const endmy = now.getFullYear()*12 + now.getMonth() + 6;
+			if(fromLD.getDatestamp()<requestDate || fromLD.getDatestamp()<today/* || requestDate+1<today*/) _legal = false
+			else {
+				let pml = await PMLCalculator.loadData(frommy-1, leave.pid);
+				while(pml.my<endmy && _legal) {
+					await pml.nextMonth()
+					const len = await calculateMonthLeaveLen(fromLD, frommy, toLD, tomy, pml.my, leave.type, leave.pid)
+					if(pml.available(leave.type) < len) {
+						_legal = false;
+						break;
+					}
+					pml.addCount(len, leave.type);
 				}
-				pml.addCount(len, leave.type);
 			}
 		}
 		if(_legal===isLegal) {
@@ -409,6 +365,22 @@ async function calculateMonthLeaveLen (fromLD, frommy, toLD, tomy, my, type, pid
 		}
 	}
 	return len;
+}
+
+exports.lateChecker = async() => {
+	const leaves = await leaveModel.find({status: 'Waiting', noresponse: false});
+	for(let i of leaves) {
+		const created = new LeaveDate(i.createdAt.getFullYear(), i.createdAt.getMonth(), i.createdAt.getDate(), true).getDatestamp();
+		const now = new Date();
+		const today = new LeaveDate(now.getFullYear(), now.getMonth(), now.getDate(), true).getDatestamp();
+		if(today>created+1) {
+			i.noresponse = true;
+			console.log('Leave '+i._id+" has no response. Marking it for superadmin")
+			await i.save()
+			await emailer.noResponse(i);
+		}
+	}
+	console.log('Late check done')
 }
 
 // const cron = require('node-cron')

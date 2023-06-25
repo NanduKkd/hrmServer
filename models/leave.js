@@ -57,6 +57,11 @@ const leaveSchema = new mongoose.Schema({
 	responseBy: mongoose.ObjectId,
 	rejectReason: String,
 	responseAt: Date,
+	noresponse: {
+		type: Boolean,
+		required: true,
+		default: false,
+	},
 	reason: {
 		type: String,
 		requred: true,

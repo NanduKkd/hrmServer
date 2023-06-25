@@ -7,6 +7,7 @@ const LeaveManager = require('../utils/leaveManager')
 const pmlModel = require('../models/pml')
 const holidayModel = require('../models/holiday')
 const mongoose = require('mongoose')
+const emailer = require('../utils/emailer')
 // const {filterLeaves} = require('../utils/leaveChecker')
 
 exports.getMy = async(req, res) => {
@@ -40,6 +41,7 @@ exports.getRequestedLeaves = async(req, res) => {
 						{$lte: ['$sub.person', null]},
 						{$eq: ['$sub.status', 'Accepted']}
 					]},
+					{$eq: ['$noresponse', false]},
 					{$eq: ['$status', 'Waiting']},
 				]}}},
 				{$lookup: {from: 'people', foreignField: '_id', localField: 'pid', as: 'employee'}},
@@ -60,34 +62,37 @@ exports.getRequestedLeaves = async(req, res) => {
 		}
 	}
 }
-exports.getSpecialLeaves = async(req, res) => {
-	try {
-		if(!req.user.superadmin) return res.status(405).end()
-		const leaves = await leaveModel.aggregate([
-			{$match: {$expr: {$and: [
-				{$or: [
-					{$lte: ['$sub.person', null]},
-					{$eq: ['$sub.status', 'Accepted']}
-				]},
-				{$eq: ['$status', 'Waiting']},
-			]}}},
-			{$lookup: {from: 'people', foreignField: '_id', localField: 'pid', as: 'employee'}},
-			{$set: {employee: {$first: '$employee'}}},
-			{$lookup: {from: 'departments', foreignField: '_id', localField: 'employee.department', as: 'department'}},
-			{$lookup: {from: 'posts', foreignField: '_id', localField: 'employee.post', as: 'post'}},
-			{$set: {post: {$first: '$post'}, department: {$first: '$department'}}},
-			{$project: {period: 1, type: 1, department: '$department.name', post: '$post.name', name: '$employee.name', pid: '$employee._id', createdAt: 1}}
-		])
-		res.status(200).json(await LeaveManager.filterLeaves(leaves, false))
-	} catch (e) {
-		console.error(e)
-		res.status(500).end()
-		if(e.runChecker) {
-			await LeaveManager.checker()
-			console.log('runnning checker');
-		}
-	}
-}
+// exports.getSpecialLeaves = async(req, res) => {
+// 	try {
+// 		console.log('haha')
+// 		if(!req.user.superadmin) return res.status(405).end()
+// 		console.log('huhu')
+// 		const leaves = await leaveModel.aggregate([
+// 			{$match: {$expr: {$and: [
+// 				{$or: [
+// 					{$lte: ['$sub.person', null]},
+// 					{$eq: ['$sub.status', 'Accepted']}
+// 				]},
+// 				{$eq: ['$status', 'Waiting']},
+// 			]}}},
+// 			{$lookup: {from: 'people', foreignField: '_id', localField: 'pid', as: 'employee'}},
+// 			{$set: {employee: {$first: '$employee'}}},
+// 			{$lookup: {from: 'departments', foreignField: '_id', localField: 'employee.department', as: 'department'}},
+// 			{$lookup: {from: 'posts', foreignField: '_id', localField: 'employee.post', as: 'post'}},
+// 			{$set: {post: {$first: '$post'}, department: {$first: '$department'}}},
+// 			{$project: {period: 1, type: 1, department: '$department.name', post: '$post.name', name: '$employee.name', pid: '$employee._id', createdAt: 1}}
+// 		])
+// 		console.log(leaves, 'hehe')
+// 		res.status(200).json(await LeaveManager.filterLeaves(leaves, false))
+// 	} catch (e) {
+// 		console.error(e)
+// 		res.status(500).end()
+// 		if(e.runChecker) {
+// 			await LeaveManager.checker()
+// 			console.log('runnning checker');
+// 		}
+// 	}
+// }
 
 exports.leavesLeft = async(req, res) => {
 	try {
@@ -271,6 +276,8 @@ exports.post = async(req, res) => {
 		res.status(201).json(leave);
 		if(leave.status==='Accepted')
 			await LeaveManager.onLeave(leave, true)
+		else
+			await emailer.newLeave(req.user, leave);
 	} catch (e) {
 		console.error(e)
 		res.status(500).end()
@@ -344,7 +351,7 @@ exports.getSpecialRequests = async(req, res) => {
 			{$lookup: {from: 'departments', foreignField: '_id', localField: 'employee.department', as: 'department'}},
 			{$lookup: {from: 'posts', foreignField: '_id', localField: 'employee.post', as: 'post'}},
 			{$set: {post: {$first: '$post'}, department: {$first: '$department'}}},
-			{$project: {period: 1, type: 1, department: '$department.name', post: '$post.name', name: '$employee.name', pid: '$employee._id', createdAt: 1}}
+			{$project: {period: 1, type: 1, department: '$department.name', post: '$post.name', name: '$employee.name', pid: '$employee._id', createdAt: 1, noresponse: 1}}
 		])
 		res.status(200).json({cancels, changeDates, leaves: await LeaveManager.filterLeaves(leaves, false)})
 	} catch (e) {

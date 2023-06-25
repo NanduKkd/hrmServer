@@ -7,6 +7,7 @@ const pmlModel = require('./models/pml')
 const postModel = require('./models/post')
 const departmentModel = require('./models/department')
 const leaveManager = require('./utils/leaveManager')
+const emailer = require('./utils/emailer')
 
 const tester = require('./controllers/attendance').personalReport
 
@@ -38,71 +39,52 @@ database.once('connected', async() => {
 	await departmentModel.deleteMany({})
 	await postModel.deleteMany({})
 	console.log('running test')
-	//await tester({params: {pid: '63f3360c8b79c3472f7115d7'}, user: {admin: true}}, res)
-	const po = new postModel({name: "Superman"})
-	await po.save()
-	const de = new departmentModel({name: "Superstrength"})
-	await de.save()
-	const p = new personModel({
+	const superPost = new postModel({name: "Superman"})
+	await superPost.save()
+	const superDep = new departmentModel({name: "Superstrength"})
+	await superDep.save()
+	const clark = new personModel({
 		joiningdate: new Date(2022, 4, 1),
-		monthsprobation: 3,
-		name: "ha",
-		email: "ha",
+		monthsprobation: 6,
+		name: "Clark Kent",
+		email: "clarkkent@gmail.com",
+		admin: true,
+		superadmin: true,
+		post: superPost._id,
+		department: superDep._id,
+		password: 'jkh',
+		onsite: false,
+	});
+	await clark.save()
+	await LeaveManager.onEmployeeAdded(clark)
+	const me = new personModel({
+		joiningdate: new Date(2023, 1, 1),
+		monthsprobation: 6,
+		name: "Nandu Kkd",
+		email: "nandukkd7164@gmail.com",
 		admin: false,
 		superadmin: false,
-		post: po._id,
-		department: de._id,
+		post: superPost._id,
+		department: superDep._id,
 		password: 'jkh',
 		onsite: true,
-	});
-	await p.save()
-	await LeaveManager.onEmployeeAdded(p)
+		leavereportingperson: clark._id,
+		attendancereportingperson: clark._id
+	})
+	await me.save();
 	const l = new leaveModel({
-		pid: p._id,
+		pid: me._id,
 		period: {
-			from: '30-03-2023-1',
-			to: '02-04-2023-1',
-			length: 4
+			from: '30-06-2023-1',
+			to: '02-07-2023-1',
+			length: 2
 		},
 		type: 'C/L',
-		status: 'Accepted',
-		reason: ''
+		status: 'Waiting',
+		reason: 'something',
 	})
 	await l.save()
-	await LeaveManager.onLeave(l, true)
-	const l1 = new leaveModel({
-		pid: p._id,
-		period: {
-			from: '22-02-2023-1',
-			to: '22-02-2023-1',
-			length: 1
-		},
-		type: 'C/L',
-		status: 'Accepted',
-		reason: ''
-	})
-	await l1.save()
-	await LeaveManager.onLeave(l1, true)
-	const attendance = new attendanceModel({
-		pid: p._id,
-		date: {
-			year: 2023, month: 5, date: 12,
-		},
-		entry: {
-			date: new Date(2023, 5, 12, 12),
-			status: 'beforenoon',
-			location: {
-				latitude: 10.431287,
-				longitude: 72.128327,
-			},
-		},
-		exit: {
-			date: new Date(2023, 5, 12, 5),
-			status: 'evening'
-		},
-		verified: false,
-	})
-	await attendance.save()
+	await emailer.newLeave(me, l)
 	//await LeaveManager.onAttendanceData(attendance, p.onsite)
 	//await tester({user: {admin: true}, params: {pid: p._id, year: 2023, month: 3}}, res)
 	database.close()

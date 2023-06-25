@@ -25,7 +25,7 @@ database.on('connected', () => {
 })
 database.on('disconnected', () => {
 	console.log('Database disconnected')
-	cronjobs.forEach(i => {
+	cronjobs.cronjobs.forEach(i => {
 		if(i.task) i.task.stop()
 	})
 })
@@ -50,6 +50,7 @@ app.use((req, res, next) => {
 app.use(express.json())
 app.use(cookieParser())
 app.use('/api', require('./api'))
+app.use('/status', require('./controllers/status'))
 app.post('/error', require('./middlewares/auth').requireAuth, require('./controllers/catchError'))
 app.use(require('./public.js'))
 

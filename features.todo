@@ -1,97 +1,69 @@
-Auth:
-	☐ Login
+Authentication:
+	✔ Login @done(23-06-23 08:31)
 	☐ Reset password
-	☐ Forgot password
-	☐ Logout
+	✔ Logout @done(23-06-23 08:31)
 
 
 Employees:
 	✔ Create superadmin @done(23-06-07 20:08)
 	✔ List employees @done(23-06-07 20:08)
 	✔ Create employee @done(23-06-07 20:08)
+	☐ Edit attendance reporting person or leave reporting person of employee
 	☐ Edit employee data
 	☐ Delete employee
 	☐ Change employee reporting person
 
 
 Attendances:
-	☐ Mark self entry
-	☐ Mark self exit
-	☐ Attendance request to attendance reporting person
-	☐ Verify attendance
-	☐ Change attendance to LoP for half day
-	☐ Change LoP attendance to attendance for half day
+	✔ Mark entry @done(23-06-23 08:32)
+	✔ Mark exit @done(23-06-23 08:32)
+	✔ Late entry or early exit will be counted as redmark @done(23-06-24 12:47)
+	✔ Attendance request to attendance reporting person @done(23-06-23 08:32)
+	✔ Verify attendance @done(23-06-24 12:46)
+	☐ Change attendance to redmark and back of any session of any user by superadmin
 
 
 Leaves:
 	✔ Leave form @done(23-06-07 20:08)
 	✔ Legal leave request to leave reporting person @done(23-06-07 20:08)
-	☐ Special leave to superadmin
-	✔ Accept or reject by leave reporting person @done(23-06-07 20:08)
-	☐ If not responded in n days, show to superadmin
-	☐ Accept or reject by superadmin
-	☐ Accepted leaves should be added to pml records
-	☐ Request cancellation days in a leave
-	☐ Form to select specific days to cancel
-	☐ Request complete cancellation of leave
-	☐ Verify cancellation by admin
-
-Special Leaves:
-	☐ Leaves that start before requesting time
-	☐ Leaves that crosses monthly limits
-
-Leave requests for superadmin:
-	☐ Leave requests from employees who's reporting to superadmin
-	☐ Leave requests that was requested 2 or more days before current day
-
-Leave requests for any other person (employee/admin):
-	☐ Requested by people reporting to that person
-	☐ Requested on current day or the day before
+	☐ Send notification to reporting person or superadmin (if leave is special or not) on leave request creation
+	✔ Special leave to superadmin @done(23-06-24 12:47)
+	✔ Accept or reject leave requests @done(23-06-07 20:08)
+	✔ If not responded in n days, forward request to superadmin @done(23-06-25 08:04)
+	☐ When forwarded to superadmin, send email notification
+	✔ Accept or reject by superadmin @done(23-06-25 08:04)
+	✔ Accepted leaves should be added to pml records of user @done(23-06-24 12:53)
+	☐ Request full cancellation or partial cancellation of a leave
+	☐ Form to select specific days to cancel in case of partial cancellation
+	☐ Send email to reporting person on cancellation
+	☐ Verify cancellation by reporting person
 
 Reports:
-	☐ Employee leaves status currently
-	☐ Per session status of selected month for employee
-	☐ Total report of company of selected month
-
-Employee report for a month:
-	☐ Status of every session
-		☐ Leave
-		☐ Leave (LoP)
-		☐ Attended
-		☐ Red Mark
-		☐ Holiday
-		☐ Holiday (Attended/Compensatory)
-		☐ Sunday
-		☐ -
-	☐ Month and year are selectable
-
-Company report for a month:
-	☐ Opening leave
-	☐ Leaves taken (Till last month)
-		☐ CL/ML/LOP
-		☐ Compensatory
-		☐ Total
-	☐ Balance leave available
-		☐ Leave for employee (>1 year)
-		☐ Leave for employee (<1 year)
-		☐ LOP
-		☐ Net Balance
-	☐ Leave taken this month
-		☐ CL/ML/LOP
-		☐ Red mark
-		☐ Compensatory
-	☐ Balance
+	✔ Employee current leaves balance in profile @done(23-06-24 12:54)
+	Per session status of selected month for employee:
+		✔ Status of every session @done(23-06-24 12:56)
+		✔ Should include Leave, Attended, Red Mark, Holiday/Sunday, Holiday/Sunday (Attended, Compensatory) @done(23-06-24 12:56)
+		✔ Month and year should be selectable @done(23-06-24 12:56)
+	Total report of company of selected month:
+		✔ Month and year should be selectable @done(23-06-24 13:01)
+		These records for every user:
+			✔ Leave Balance at start of month: PL, CL, SL, Compensatory @done(23-06-24 13:00)
+			✔ Leave taken this month: PL, CL, SL @done(23-06-24 13:00)
+			✔ Earned this month: Compensatory, Red mark @done(23-06-24 13:00)
+			✔ LOP this month @done(23-06-24 13:00)
+			✔ Balance: PL, CL, SL, Compensatory @done(23-06-24 13:00)
 
 Notifications:
-	☐ Create a notification by superadmin
-	☐ Show notifications for admins and employees
+	✔ Create a notification by superadmin @done(23-06-24 13:01)
+	✔ Show notifications to employees @done(23-06-24 13:01)
+	☐ Send email notification to every users
 
 
 Calendar:
 	✔ Show onsite calendar for superadmin, admin and onsite employees @done(23-06-07 20:09)
 	✔ Show office calendar for superadmin, admin and office employees @done(23-06-07 20:09)
-	☐ Set a day or session as holiday, and enter reason for superadmin
-	☐ Show holiday reason for admin and employees
+	✔ Set a day or session as holiday, and enter reason for superadmin @done(23-06-24 12:45)
+	✔ Show holiday reason for admin and employees @done(23-06-24 12:45)
 
 
 Leave form:
@@ -110,8 +82,8 @@ Leave form:
 
 
 Substitute for leave:
-	☐ Show requests
-	☐ Accept or reject requests
-	☐ Show cancellations
-	☐ Show changes
-	☐ Accept or reject changes
+	✔ Select a substitute while creating a PL leave @done(23-06-25 07:55)
+	✔ Show substitute requests @done(23-06-25 07:55)
+	✔ Accept or reject requests @done(23-06-25 07:55)
+	☐ Change substitute for leaves of which substitute requests where rejected
+	☐ Show cancellation of leaves of which user is a substitute

@@ -1,0 +1,47 @@
+
+body {
+	background-color: #000;
+	color: #c3c3c3;
+	line-height: 1.3em;
+	padding: 0.1em;
+}
+.notimp {
+	display: none;
+}
+.blur {
+	opacity: 0.5;
+	margin-left: 0.5em;
+}
+.group {
+	margin-left: 0.5em;
+}
+.done {
+	color: rgb(64, 183, 64);
+}
+.header {
+	color: rgb(117, 220, 255);
+}
+.line {
+	display: flex;
+	margin: 0.4em 0;
+}
+.mark {
+	margin-right: 0.7em;
+}
+
+@media only screen and (min-width: 768px) {
+	body {
+		line-height: 1.5em;
+		font-size: 1.3em;
+		padding: 1em;
+	}
+	.notimp {
+		display: inline-block;
+	}
+	.line {
+		margin: 0.4em 0;
+	}
+	.group {
+		margin-left: 2em;
+	}
+}

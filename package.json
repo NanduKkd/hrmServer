@@ -7,8 +7,8 @@
     "test": "nodemon test.js",
     "start": "nodemon index.js",
     "serve": "node index.js",
-		"tsc": "tsc -p tsconfig.json",
-		"tsc1": "tsc -p tsconfig1.json"
+    "tsc": "tsc -p tsconfig.json",
+    "tsc1": "tsc -p tsconfig1.json"
   },
   "keywords": [
     "leave",
@@ -22,6 +22,7 @@
   "author": "nandukkd",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-sesv2": "^3.359.0",
     "bcrypt": "^5.1.0",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
